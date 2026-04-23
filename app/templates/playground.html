@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="split">
+  <form class="panel form-grid" method="post" action="/playground">
+    <div class="panel-header">
+      <div>
+        <div class="eyebrow">Manual generation</div>
+        <h3>Submit a review from the admin panel</h3>
+      </div>
+    </div>
+    <div class="two-col">
+      <label>
+        <span>Marketplace</span>
+        <select name="marketplace">
+          <option value="manual">manual</option>
+          <option value="wb">wb</option>
+          <option value="ozon">ozon</option>
+          <option value="yandex_market">yandex_market</option>
+        </select>
+      </label>
+      <label>
+        <span>Rating</span>
+        <input name="rating" type="number" min="1" max="5" value="4" required />
+      </label>
+    </div>
+    <div class="two-col">
+      <label>
+        <span>Product SKU</span>
+        <input name="product_sku" placeholder="ABC-123" />
+      </label>
+      <label>
+        <span>Product name</span>
+        <input name="product_name" placeholder="Thermo Bottle 500 ml" />
+      </label>
+    </div>
+    <div class="two-col">
+      <label>
+        <span>Customer name</span>
+        <input name="customer_name" placeholder="Optional" />
+      </label>
+      <label>
+        <span>Language</span>
+        <select name="language">
+          <option value="ru">ru</option>
+          <option value="en">en</option>
+        </select>
+      </label>
+    </div>
+    <label>
+      <span>Review text</span>
+      <textarea name="review_text" rows="10" placeholder="Например: Товар пришёл с браком, крышка не закрывается плотно..." required></textarea>
+    </label>
+    <button class="button primary wide" type="submit">Generate draft</button>
+  </form>
+
+  <section class="stack">
+    <article class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="eyebrow">Latest result</div>
+          <h3>{% if selected_run %}Run #{{ selected_run.id }}{% else %}No result selected{% endif %}</h3>
+        </div>
+        {% if selected_run %}
+        <a class="button ghost" href="/history?run_id={{ selected_run.id }}">Open in history</a>
+        {% endif %}
+      </div>
+
+      {% if selected_run %}
+      <div class="badge-row">
+        <span class="badge">{{ selected_run.decision.value if selected_run.decision else 'failed' }}</span>
+        <span class="badge subdued">risk: {{ selected_run.risk_level or 'n/a' }}</span>
+        <span class="badge subdued">confidence: {{ '%.2f'|format(selected_run.confidence_score or 0) }}</span>
+      </div>
+
+      <div class="result-block">
+        <div class="result-title">Reply draft</div>
+        <div class="reply-box">{{ selected_run.reply_result.reply_text if selected_run.reply_result else selected_run.error_text }}</div>
+      </div>
+
+      <div class="result-block">
+        <div class="result-title">Reason codes</div>
+        <div class="tag-list">
+          {% for code in selected_run.reason_codes %}
+          <span class="tag">{{ code }}</span>
+          {% else %}
+          <span class="tag">none</span>
+          {% endfor %}
+        </div>
+      </div>
+      {% else %}
+      <div class="empty-state">Generate the first draft to inspect classification, routing, and retrieved storage.</div>
+      {% endif %}
+    </article>
+
+    {% if selected_run %}
+    <article class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="eyebrow">Structured outputs</div>
+          <h3>Classification and reply payloads</h3>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="result-title">Classification</div>
+        <pre>{{ selected_run.classification_result | tojson(indent=2) }}</pre>
+      </div>
+      <div class="code-block">
+        <div class="result-title">Reply payload</div>
+        <pre>{{ selected_run.reply_result | tojson(indent=2) }}</pre>
+      </div>
+      <div class="code-block">
+        <div class="result-title">Retrieved storage snapshot</div>
+        <pre>{{ selected_run.retrieved_snapshot | tojson(indent=2) }}</pre>
+      </div>
+    </article>
+    {% endif %}
+  </section>
+</section>
+{% endblock %}
+

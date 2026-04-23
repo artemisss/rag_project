@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="split wide">
+  <article class="panel">
+    <div class="panel-header">
+      <div>
+        <div class="eyebrow">Runs</div>
+        <h3>All generated review drafts</h3>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Review</th>
+            <th>Decision</th>
+            <th>Confidence</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for run in runs %}
+          <tr>
+            <td>#{{ run.id }}</td>
+            <td>{{ run.review_text[:90] ~ ('…' if run.review_text|length > 90 else '') }}</td>
+            <td>{{ run.decision.value if run.decision else run.status.value }}</td>
+            <td>{{ '%.2f'|format(run.confidence_score or 0) }}</td>
+            <td><a href="/history?run_id={{ run.id }}">Inspect</a></td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="5">No history yet.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <section class="stack">
+    <article class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="eyebrow">Selected run</div>
+          <h3>{% if selected_run %}Run #{{ selected_run.id }}{% else %}Choose a run{% endif %}</h3>
+        </div>
+      </div>
+      {% if selected_run %}
+      <div class="badge-row">
+        <span class="badge">{{ selected_run.decision.value if selected_run.decision else selected_run.status.value }}</span>
+        <span class="badge subdued">risk: {{ selected_run.risk_level or 'n/a' }}</span>
+        <span class="badge subdued">confidence: {{ '%.2f'|format(selected_run.confidence_score or 0) }}</span>
+      </div>
+
+      <div class="result-block">
+        <div class="result-title">Review</div>
+        <div class="reply-box">{{ selected_run.review_text }}</div>
+      </div>
+      <div class="result-block">
+        <div class="result-title">Reply</div>
+        <div class="reply-box">{{ selected_run.reply_result.reply_text if selected_run.reply_result else selected_run.error_text }}</div>
+      </div>
+      <div class="code-block">
+        <div class="result-title">Structured payload</div>
+        <pre>{{ selected_run.reply_result | tojson(indent=2) }}</pre>
+      </div>
+      {% else %}
+      <div class="empty-state">Pick a run from the list to inspect the result.</div>
+      {% endif %}
+    </article>
+
+    {% if selected_run and selected_run.reply_result %}
+    <form class="panel form-grid" method="post" action="/history/{{ selected_run.id }}/promote">
+      <div class="panel-header">
+        <div>
+          <div class="eyebrow">Promote to storage</div>
+          <h3>Save this run as a golden example</h3>
+        </div>
+      </div>
+      <label>
+        <span>Title</span>
+        <input name="title" value="Example from run #{{ selected_run.id }}" required />
+      </label>
+      <label>
+        <span>Notes</span>
+        <textarea name="notes" rows="3" placeholder="Why this is a good example"></textarea>
+      </label>
+      <button class="button primary" type="submit">Save to storage</button>
+    </form>
+    {% endif %}
+  </section>
+</section>
+{% endblock %}
+

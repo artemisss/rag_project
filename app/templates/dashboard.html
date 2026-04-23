@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="card-grid">
+  <article class="card metric">
+    <span>Total runs</span>
+    <strong>{{ stats.total_runs }}</strong>
+  </article>
+  <article class="card metric">
+    <span>Storage items</span>
+    <strong>{{ stats.total_items }}</strong>
+  </article>
+  <article class="card metric">
+    <span>Needs review</span>
+    <strong>{{ stats.open_runs }}</strong>
+  </article>
+  <article class="card metric">
+    <span>Golden examples</span>
+    <strong>{{ stats.examples }}</strong>
+  </article>
+</section>
+
+<section class="split">
+  <article class="panel">
+    <div class="panel-header">
+      <div>
+        <div class="eyebrow">Recent drafts</div>
+        <h3>Latest generation activity</h3>
+      </div>
+      <a class="button ghost" href="/history">Open history</a>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Rating</th>
+            <th>Decision</th>
+            <th>Risk</th>
+            <th>SKU</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for run in recent_runs %}
+          <tr>
+            <td>#{{ run.id }}</td>
+            <td>{{ run.rating }}</td>
+            <td>{{ run.decision.value if run.decision else 'failed' }}</td>
+            <td>{{ run.risk_level or 'n/a' }}</td>
+            <td>{{ run.product_sku or '—' }}</td>
+            <td><a href="/history?run_id={{ run.id }}">Open</a></td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="6">No runs yet. Start from the playground.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="panel">
+    <div class="panel-header">
+      <div>
+        <div class="eyebrow">Audit log</div>
+        <h3>Latest workspace events</h3>
+      </div>
+      <a class="button ghost" href="/settings">Workspace</a>
+    </div>
+    <div class="activity-list">
+      {% for event in recent_audit %}
+      <div class="activity-item">
+        <strong>{{ event.action }}</strong>
+        <span>{{ event.entity_type }} / {{ event.entity_id }}</span>
+        <small>{{ event.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+      </div>
+      {% else %}
+      <div class="empty-state">No audit events yet.</div>
+      {% endfor %}
+    </div>
+  </article>
+</section>
+
+<section class="split">
+  <article class="panel">
+    <div class="eyebrow">Storage first</div>
+    <h3>How the product uses your brand storage</h3>
+    <ul class="check-list">
+      <li>Policies define mandatory wording and escalation rules.</li>
+      <li>Golden examples steer style without hard-copying answers.</li>
+      <li>Product facts and FAQ items add SKU-specific guidance.</li>
+      <li>Forbidden phrases are injected as negative constraints before generation.</li>
+    </ul>
+  </article>
+  <article class="panel">
+    <div class="eyebrow">Recommended workflow</div>
+    <h3>Daily operator loop</h3>
+    <ol class="ordered-list">
+      <li>Generate a reply in the playground.</li>
+      <li>Inspect retrieved storage and the decision route.</li>
+      <li>Promote strong replies into examples from history.</li>
+      <li>Adjust prompts and policies only when patterns repeat.</li>
+    </ol>
+  </article>
+</section>
+{% endblock %}
+

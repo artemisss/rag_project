@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="split wide">
+  <form class="panel form-grid" method="post" action="/settings/workspace">
+    <div class="panel-header">
+      <div>
+        <div class="eyebrow">Workspace profile</div>
+        <h3>Brand, model, and moderation settings</h3>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <label><span>Project name</span><input name="project_name" value="{{ workspace.project_name }}" required /></label>
+      <label><span>Brand name</span><input name="brand_name" value="{{ workspace.brand_name }}" required /></label>
+    </div>
+    <label><span>Brand description</span><textarea name="brand_description" rows="3">{{ workspace.brand_description }}</textarea></label>
+    <label><span>Tone of voice</span><textarea name="tone_of_voice" rows="4">{{ workspace.tone_of_voice }}</textarea></label>
+    <label><span>Brand promises</span><textarea name="brand_promises" rows="3">{{ workspace.brand_promises }}</textarea></label>
+    <label><span>Support signature</span><textarea name="support_signature" rows="2">{{ workspace.support_signature }}</textarea></label>
+    <label><span>Public contact hint</span><textarea name="public_contact_hint" rows="2">{{ workspace.public_contact_hint }}</textarea></label>
+    <label><span>Return policy summary</span><textarea name="return_policy_summary" rows="3">{{ workspace.return_policy_summary }}</textarea></label>
+    <label><span>Compensation policy</span><textarea name="compensation_policy" rows="3">{{ workspace.compensation_policy }}</textarea></label>
+    <label><span>Forbidden phrases</span><textarea name="do_not_say" rows="4">{{ workspace.do_not_say }}</textarea></label>
+
+    <div class="two-col">
+      <label>
+        <span>Default language</span>
+        <input name="default_language" value="{{ workspace.default_language }}" />
+      </label>
+      <label>
+        <span>Auto threshold</span>
+        <input name="auto_publish_threshold" type="number" min="0" max="1" step="0.01" value="{{ workspace.auto_publish_threshold }}" />
+      </label>
+    </div>
+
+    <div class="section-title">OpenAI connection</div>
+    <div class="helper">Current key: {{ masked_openai_key }}</div>
+    <label><span>New API key</span><input name="openai_api_key" type="password" placeholder="Leave empty to keep current key" /></label>
+    <div class="two-col">
+      <label><span>Model</span><input name="openai_model" value="{{ workspace.openai_model }}" /></label>
+      <label><span>Base URL</span><input name="openai_base_url" value="{{ workspace.openai_base_url }}" /></label>
+    </div>
+    <div class="two-col">
+      <label>
+        <span>Reasoning effort</span>
+        <select name="reasoning_effort">
+          {% for option in ['none', 'low', 'medium', 'high'] %}
+          <option value="{{ option }}" {% if workspace.reasoning_effort == option %}selected{% endif %}>{{ option }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>
+        <span>Verbosity</span>
+        <select name="text_verbosity">
+          {% for option in ['low', 'medium', 'high'] %}
+          <option value="{{ option }}" {% if workspace.text_verbosity == option %}selected{% endif %}>{{ option }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+    <button class="button primary" type="submit">Save workspace settings</button>
+  </form>
+
+  <section class="stack">
+    <form class="panel form-grid" method="post" action="/settings/prompts">
+      <div class="panel-header">
+        <div>
+          <div class="eyebrow">Prompt pack</div>
+          <h3>Publish a new active prompt version</h3>
+        </div>
+      </div>
+      <label><span>Version name</span><input name="prompt_name" value="{{ prompt.name }}" /></label>
+      <label><span>System prompt</span><textarea name="system_prompt" rows="8">{{ prompt.system_prompt }}</textarea></label>
+      <label><span>Classifier prompt</span><textarea name="classifier_prompt" rows="8">{{ prompt.classifier_prompt }}</textarea></label>
+      <label><span>Generator prompt</span><textarea name="generator_prompt" rows="8">{{ prompt.generator_prompt }}</textarea></label>
+      <button class="button primary" type="submit">Publish prompt version</button>
+    </form>
+
+    <article class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="eyebrow">Prompt history</div>
+          <h3>Recently published versions</h3>
+        </div>
+      </div>
+      <div class="activity-list">
+        {% for version in prompt_versions %}
+        <div class="activity-item">
+          <strong>{{ version.name }}</strong>
+          <span>ID {{ version.id }}{% if version.is_active %} / active{% endif %}</span>
+          <small>{{ version.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+        </div>
+        {% else %}
+        <div class="empty-state">No prompt versions found.</div>
+        {% endfor %}
+      </div>
+    </article>
+  </section>
+</section>
+{% endblock %}
+

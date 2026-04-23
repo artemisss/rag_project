@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="split wide">
+  <section class="stack">
+    <form class="panel form-grid" method="get" action="/storage">
+      <div class="panel-header">
+        <div>
+          <div class="eyebrow">Library browser</div>
+          <h3>Inspect and filter storage</h3>
+        </div>
+      </div>
+      <div class="two-col">
+        <label>
+          <span>Type</span>
+          <select name="item_type">
+            <option value="">all</option>
+            {% for type in item_types %}
+            <option value="{{ type.value }}" {% if selected_item_type == type.value %}selected{% endif %}>{{ type.value }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label>
+          <span>Search</span>
+          <input name="search" value="{{ search }}" placeholder="sku, phrase, issue, title" />
+        </label>
+      </div>
+      <button class="button ghost" type="submit">Apply filter</button>
+    </form>
+
+    <form class="panel form-grid" method="post" action="/storage/retrieval-test">
+      <div class="panel-header">
+        <div>
+          <div class="eyebrow">Retrieval test</div>
+          <h3>See what the generator would pull from storage</h3>
+        </div>
+      </div>
+      <label>
+        <span>Review text</span>
+        <textarea name="review_text" rows="5" placeholder="Введите отзыв для теста retrieval" required>{{ retrieval_preview.review_text if retrieval_preview else '' }}</textarea>
+      </label>
+      <div class="two-col">
+        <label><span>Marketplace</span><input name="marketplace" value="{{ retrieval_preview.marketplace if retrieval_preview else '' }}" /></label>
+        <label><span>SKU</span><input name="product_sku" value="{{ retrieval_preview.product_sku if retrieval_preview else '' }}" /></label>
+      </div>
+      <div class="two-col">
+        <label><span>Product name</span><input name="product_name" value="{{ retrieval_preview.product_name if retrieval_preview else '' }}" /></label>
+        <label><span>Issue type</span><input name="issue_type" value="{{ retrieval_preview.issue_type if retrieval_preview else '' }}" /></label>
+      </div>
+      <input type="hidden" name="language" value="{{ retrieval_preview.language if retrieval_preview else 'ru' }}" />
+      <button class="button primary" type="submit">Run retrieval test</button>
+
+      {% if retrieval_result %}
+      <div class="code-block">
+        <div class="result-title">Retrieved context</div>
+        <pre>{{ retrieval_result.to_prompt_block() }}</pre>
+      </div>
+      {% endif %}
+    </form>
+  </section>
+
+  <section class="stack">
+    <form class="panel form-grid" method="post" action="/storage">
+      <input type="hidden" name="item_id" value="{{ edit_item.id if edit_item else 0 }}" />
+      <div class="panel-header">
+        <div>
+          <div class="eyebrow">Editor</div>
+          <h3>{{ 'Edit storage item' if edit_item else 'Add storage item' }}</h3>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <label>
+          <span>Type</span>
+          <select name="item_type">
+            {% for type in item_types %}
+            <option value="{{ type.value }}" {% if edit_item and edit_item.item_type.value == type.value %}selected{% endif %}>{{ type.value }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label>
+          <span>Priority</span>
+          <input name="priority" type="number" value="{{ edit_item.priority if edit_item else 50 }}" />
+        </label>
+      </div>
+
+      <label>
+        <span>Title</span>
+        <input name="title" value="{{ edit_item.title if edit_item else '' }}" required />
+      </label>
+      <label>
+        <span>Body / instruction</span>
+        <textarea name="body" rows="4">{{ edit_item.body if edit_item else '' }}</textarea>
+      </label>
+      <label>
+        <span>Example review or extra context</span>
+        <textarea name="context_text" rows="3">{{ edit_item.context_text if edit_item else '' }}</textarea>
+      </label>
+      <label>
+        <span>Example answer</span>
+        <textarea name="answer_text" rows="4">{{ edit_item.answer_text if edit_item else '' }}</textarea>
+      </label>
+      <div class="two-col">
+        <label><span>Marketplace</span><input name="marketplace" value="{{ edit_item.marketplace if edit_item else '' }}" /></label>
+        <label><span>Product SKU</span><input name="product_sku" value="{{ edit_item.product_sku if edit_item else '' }}" /></label>
+      </div>
+      <div class="two-col">
+        <label><span>Product name</span><input name="product_name" value="{{ edit_item.product_name if edit_item else '' }}" /></label>
+        <label><span>Category</span><input name="category" value="{{ edit_item.category if edit_item else '' }}" /></label>
+      </div>
+      <div class="two-col">
+        <label><span>Issue type</span><input name="issue_type" value="{{ edit_item.issue_type if edit_item else '' }}" /></label>
+        <label><span>Rating bucket</span><input name="rating_bucket" value="{{ edit_item.rating_bucket if edit_item else '' }}" /></label>
+      </div>
+      <div class="two-col">
+        <label><span>Language</span><input name="language" value="{{ edit_item.language if edit_item else 'ru' }}" /></label>
+        <label><span>Tags</span><input name="tags_text" value="{{ edit_item.tags_text if edit_item else '' }}" placeholder="defect, packaging, gratitude" /></label>
+      </div>
+      <label class="checkbox-line">
+        <input name="is_active" type="checkbox" {% if edit_item and edit_item.is_active or not edit_item %}checked{% endif %} />
+        <span>Active item</span>
+      </label>
+      <div class="button-row">
+        <button class="button primary" type="submit">{{ 'Save item' if edit_item else 'Create item' }}</button>
+        {% if edit_item %}
+        <a class="button ghost" href="/storage">Cancel edit</a>
+        {% endif %}
+      </div>
+    </form>
+
+    <article class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="eyebrow">Current storage</div>
+          <h3>{{ items|length }} items</h3>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Title</th>
+              <th>Issue</th>
+              <th>SKU</th>
+              <th>Priority</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in items %}
+            <tr>
+              <td>{{ item.item_type.value }}</td>
+              <td>
+                <strong>{{ item.title }}</strong>
+                <div class="table-subline">{{ item.body[:90] ~ ('…' if item.body|length > 90 else '') }}</div>
+              </td>
+              <td>{{ item.issue_type or '—' }}</td>
+              <td>{{ item.product_sku or '—' }}</td>
+              <td>{{ item.priority }}</td>
+              <td>
+                <div class="inline-actions">
+                  <a href="/storage?edit={{ item.id }}">Edit</a>
+                  <form method="post" action="/storage/{{ item.id }}/archive">
+                    <button type="submit">Archive</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="6">Storage is empty. Add brand rules, examples, and product facts.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </section>
+</section>
+{% endblock %}
+

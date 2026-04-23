@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="welcome-hero">
+  <div class="welcome-copy">
+    <div class="eyebrow">First launch</div>
+    <h2>Configure the workspace before anyone can generate replies</h2>
+    <p>
+      This setup defines the brand voice, storage rules, OpenAI access, and the
+      moderation threshold. Until setup is complete, the product stays locked.
+    </p>
+    <div class="card-grid compact">
+      <article class="card glass">
+        <h3>1. Brand core</h3>
+        <p>Set tone of voice, promises, return guidance, support signature, and forbidden language.</p>
+      </article>
+      <article class="card glass">
+        <h3>2. OpenAI</h3>
+        <p>Add the API key and default model. The app uses Responses API with structured outputs.</p>
+      </article>
+      <article class="card glass">
+        <h3>3. Storage seeding</h3>
+        <p>On save, the app creates an initial storage layer from your brand rules and forbidden phrases.</p>
+      </article>
+    </div>
+  </div>
+
+  <form class="panel form-grid" method="post" action="/welcome">
+    <section>
+      <div class="section-title">Workspace</div>
+      <label>
+        <span>Project name</span>
+        <input name="project_name" value="ReviewOps AI" required />
+      </label>
+      <label>
+        <span>Brand name</span>
+        <input name="brand_name" placeholder="Acme Market Brand" required />
+      </label>
+      <label>
+        <span>Brand description</span>
+        <textarea name="brand_description" rows="3" placeholder="What the brand sells and how it positions itself"></textarea>
+      </label>
+      <label>
+        <span>Tone of voice</span>
+        <textarea name="tone_of_voice" rows="4" placeholder="Calm, warm, concise, solution-first. No slang."></textarea>
+      </label>
+      <label>
+        <span>Brand promises</span>
+        <textarea name="brand_promises" rows="3" placeholder="What the brand can safely promise in public replies"></textarea>
+      </label>
+      <label>
+        <span>Support signature</span>
+        <textarea name="support_signature" rows="2" placeholder="How replies should end"></textarea>
+      </label>
+    </section>
+
+    <section>
+      <div class="section-title">Policies</div>
+      <label>
+        <span>Public contact hint</span>
+        <textarea name="public_contact_hint" rows="3" placeholder="Where to redirect complex cases"></textarea>
+      </label>
+      <label>
+        <span>Return policy summary</span>
+        <textarea name="return_policy_summary" rows="4" placeholder="Safe public wording for returns and exchanges"></textarea>
+      </label>
+      <label>
+        <span>Compensation policy</span>
+        <textarea name="compensation_policy" rows="3" placeholder="What is forbidden or allowed regarding refunds, bonuses, compensation"></textarea>
+      </label>
+      <label>
+        <span>Forbidden phrases</span>
+        <textarea name="do_not_say" rows="5" placeholder="- We guarantee refund&#10;- It is your fault&#10;- This cannot happen"></textarea>
+      </label>
+      <div class="two-col">
+        <label>
+          <span>Default language</span>
+          <select name="default_language">
+            <option value="ru">ru</option>
+            <option value="en">en</option>
+          </select>
+        </label>
+        <label>
+          <span>Auto threshold</span>
+          <input name="auto_publish_threshold" type="number" min="0" max="1" step="0.01" value="0.90" />
+        </label>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title">OpenAI</div>
+      <label>
+        <span>API key</span>
+        <input name="openai_api_key" type="password" placeholder="sk-..." required />
+      </label>
+      <div class="two-col">
+        <label>
+          <span>Model</span>
+          <input name="openai_model" value="gpt-5.4" />
+        </label>
+        <label>
+          <span>Base URL</span>
+          <input name="openai_base_url" value="https://api.openai.com/v1" />
+        </label>
+      </div>
+      <div class="two-col">
+        <label>
+          <span>Reasoning effort</span>
+          <select name="reasoning_effort">
+            <option value="low">low</option>
+            <option value="medium">medium</option>
+            <option value="high">high</option>
+            <option value="none">none</option>
+          </select>
+        </label>
+        <label>
+          <span>Verbosity</span>
+          <select name="text_verbosity">
+            <option value="low">low</option>
+            <option value="medium" selected>medium</option>
+            <option value="high">high</option>
+          </select>
+        </label>
+      </div>
+      <button class="button primary wide" type="submit">Complete setup</button>
+      <p class="helper">After setup, the dashboard, storage, settings, history, and reply playground become available.</p>
+    </section>
+  </form>
+</section>
+{% endblock %}
+
