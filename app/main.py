@@ -24,6 +24,7 @@ from app.db.models import (
 )
 from app.db.session import create_session_factory, init_database
 from app.services.generation import ReviewInput, generate_review_reply
+from app.services.analytics import build_analytics_snapshot
 from app.services.knowledge import (
     KnowledgeItemPayload,
     archive_item,
@@ -76,13 +77,16 @@ class GenerateAPIRequest(BaseModel):
     language: str = "ru"
 
 
-def create_app(config: Optional[AppConfig] = None) -> FastAPI:
+def create_app(
+    config: Optional[AppConfig] = None,
+    openai_client: Optional[OpenAIResponsesClient] = None,
+) -> FastAPI:
     config = config or AppConfig.from_env()
     config.ensure_directories()
     engine, session_factory = create_session_factory(config.database_url)
     init_database(engine)
     secret_box = SecretBox(config.secret_key_path)
-    openai_client = OpenAIResponsesClient(
+    openai_client = openai_client or OpenAIResponsesClient(
         base_url="https://api.openai.com/v1", timeout_seconds=config.openai_timeout_seconds
     )
 
@@ -107,12 +111,27 @@ def create_app(config: Optional[AppConfig] = None) -> FastAPI:
 
     @app.middleware("http")
     async def setup_gate(request: Request, call_next):
-        public_paths = {"/welcome", "/api/setup/status", "/api/health"}
+        public_paths = {
+            "/welcome",
+            "/api/setup/status",
+            "/api/setup",
+            "/api/v1/setup/status",
+            "/api/v1/setup",
+            "/api/health",
+        }
         if request.url.path.startswith("/static") or request.url.path in public_paths:
             return await call_next(request)
 
         with session_factory() as session:
             if not is_setup_complete(session):
+                if request.url.path.startswith("/api/"):
+                    return JSONResponse(
+                        {
+                            "error": "workspace_setup_required",
+                            "message": "Complete workspace onboarding before using the API.",
+                        },
+                        status_code=status.HTTP_423_LOCKED,
+                    )
                 return RedirectResponse(url="/welcome", status_code=status.HTTP_307_TEMPORARY_REDIRECT)
         return await call_next(request)
 
@@ -128,6 +147,10 @@ def create_app(config: Optional[AppConfig] = None) -> FastAPI:
                 "setup_complete": is_setup_complete(session),
                 "brand_name": workspace.brand_name if workspace else None,
             }
+
+    @app.get("/api/v1/setup/status")
+    async def api_v1_setup_status() -> dict[str, Any]:
+        return await api_setup_status()
 
     @app.post("/api/setup")
     async def api_setup(payload: SetupAPIRequest) -> JSONResponse:
@@ -147,17 +170,78 @@ def create_app(config: Optional[AppConfig] = None) -> FastAPI:
                 }
             )
 
+    @app.post("/api/v1/setup")
+    async def api_v1_setup(payload: SetupAPIRequest) -> JSONResponse:
+        return await api_setup(payload)
+
     @app.post("/api/reviews/generate")
     async def api_generate_review(payload: GenerateAPIRequest) -> JSONResponse:
         with session_factory() as session:
-            result = generate_review_reply(
-                session,
-                input_data=ReviewInput(**payload.model_dump()),
-                secret_box=secret_box,
-                openai_client=_client_for_workspace(session, config, openai_client),
+            try:
+                result = generate_review_reply(
+                    session,
+                    input_data=ReviewInput(**payload.model_dump()),
+                    secret_box=secret_box,
+                    openai_client=_client_for_workspace(session, config, openai_client),
+                )
+                session.commit()
+                return JSONResponse(_serialize_run(result.run))
+            except Exception as exc:
+                session.rollback()
+                return JSONResponse(
+                    {"error": "generation_failed", "message": str(exc)},
+                    status_code=status.HTTP_502_BAD_GATEWAY,
+                )
+
+    @app.post("/api/v1/reviews/generate")
+    async def api_v1_generate_review(payload: GenerateAPIRequest) -> JSONResponse:
+        return await api_generate_review(payload)
+
+    @app.get("/api/v1/reviews/history")
+    async def api_v1_reviews_history(limit: int = 50) -> JSONResponse:
+        with session_factory() as session:
+            runs = list(
+                session.scalars(
+                    select(GenerationRun).order_by(GenerationRun.created_at.desc()).limit(limit)
+                )
             )
-            session.commit()
-            return JSONResponse(_serialize_run(result.run))
+            return JSONResponse({"items": [_serialize_run(run) for run in runs]})
+
+    @app.get("/api/v1/knowledge")
+    async def api_v1_knowledge(item_type: str = "", search: str = "") -> JSONResponse:
+        with session_factory() as session:
+            items = list_items(session, item_type=item_type or None, search=search)
+            return JSONResponse({"items": [_serialize_knowledge_item(item) for item in items]})
+
+    @app.get("/api/v1/analytics")
+    async def api_v1_analytics() -> JSONResponse:
+        with session_factory() as session:
+            return JSONResponse(build_analytics_snapshot(session))
+
+    @app.get("/api/v1/audit")
+    async def api_v1_audit(limit: int = 100) -> JSONResponse:
+        with session_factory() as session:
+            events = list(
+                session.scalars(select(AuditLog).order_by(AuditLog.created_at.desc()).limit(limit))
+            )
+            return JSONResponse({"items": [_serialize_audit_event(event) for event in events]})
+
+    @app.post("/api/v1/settings/test-openai")
+    async def api_v1_test_openai() -> JSONResponse:
+        with session_factory() as session:
+            try:
+                result = _run_openai_connection_test(
+                    session=session,
+                    secret_box=secret_box,
+                    config=config,
+                    default_client=openai_client,
+                )
+                return JSONResponse({"ok": True, "message": result["message"]})
+            except Exception as exc:
+                return JSONResponse(
+                    {"ok": False, "message": str(exc)},
+                    status_code=status.HTTP_502_BAD_GATEWAY,
+                )
 
     @app.get("/", response_class=HTMLResponse)
     async def root() -> RedirectResponse:
@@ -487,6 +571,26 @@ def create_app(config: Optional[AppConfig] = None) -> FastAPI:
             )
             return templates.TemplateResponse(request, "settings.html", context)
 
+    @app.post("/settings/test-openai", response_class=HTMLResponse)
+    async def settings_test_openai():
+        with session_factory() as session:
+            try:
+                result = _run_openai_connection_test(
+                    session=session,
+                    secret_box=secret_box,
+                    config=config,
+                    default_client=openai_client,
+                )
+                return RedirectResponse(
+                    url=f"/settings?message={_quote_query(result['message'])}",
+                    status_code=status.HTTP_303_SEE_OTHER,
+                )
+            except Exception as exc:
+                return RedirectResponse(
+                    url=f"/settings?error={_quote_query(str(exc))}",
+                    status_code=status.HTTP_303_SEE_OTHER,
+                )
+
     @app.post("/settings/workspace", response_class=HTMLResponse)
     async def settings_workspace_update(
         project_name: str = Form(...),
@@ -562,6 +666,24 @@ def create_app(config: Optional[AppConfig] = None) -> FastAPI:
             status_code=status.HTTP_303_SEE_OTHER,
         )
 
+    @app.get("/analytics", response_class=HTMLResponse)
+    async def analytics(request: Request):
+        with session_factory() as session:
+            snapshot = build_analytics_snapshot(session)
+            context = _base_context(request, session, current_page="analytics")
+            context.update({"snapshot": snapshot})
+            return templates.TemplateResponse(request, "analytics.html", context)
+
+    @app.get("/audit", response_class=HTMLResponse)
+    async def audit(request: Request):
+        with session_factory() as session:
+            events = list(
+                session.scalars(select(AuditLog).order_by(AuditLog.created_at.desc()).limit(200))
+            )
+            context = _base_context(request, session, current_page="audit")
+            context.update({"events": events})
+            return templates.TemplateResponse(request, "audit.html", context)
+
     return app
 
 
@@ -593,16 +715,24 @@ def _serialize_run(run: GenerationRun) -> dict[str, Any]:
         "confidence_score": run.confidence_score,
         "reason_codes": run.reason_codes,
         "retrieved_item_ids": run.retrieved_item_ids,
+        "retrieved_snapshot": run.retrieved_snapshot,
         "status": run.status.value,
         "error_text": run.error_text,
+        "created_at": run.created_at.isoformat(),
+        "updated_at": run.updated_at.isoformat(),
     }
 
 
 def _client_for_workspace(
     session: Session, config: AppConfig, default_client: OpenAIResponsesClient
 ) -> OpenAIResponsesClient:
+    if not isinstance(default_client, OpenAIResponsesClient):
+        return default_client
+
     workspace = get_workspace(session)
     if workspace and workspace.openai_base_url:
+        if workspace.openai_base_url.rstrip("/") == default_client.base_url.rstrip("/"):
+            return default_client
         return OpenAIResponsesClient(
             base_url=workspace.openai_base_url,
             timeout_seconds=config.openai_timeout_seconds,
@@ -612,3 +742,79 @@ def _client_for_workspace(
 
 def _quote_query(value: str) -> str:
     return urlencode({"error": value}).split("=", 1)[1]
+
+
+def _serialize_knowledge_item(item: KnowledgeItem) -> dict[str, Any]:
+    return {
+        "id": item.id,
+        "item_type": item.item_type.value,
+        "title": item.title,
+        "body": item.body,
+        "context_text": item.context_text,
+        "answer_text": item.answer_text,
+        "marketplace": item.marketplace,
+        "product_sku": item.product_sku,
+        "product_name": item.product_name,
+        "category": item.category,
+        "issue_type": item.issue_type,
+        "rating_bucket": item.rating_bucket,
+        "language": item.language,
+        "tags_text": item.tags_text,
+        "priority": item.priority,
+        "is_active": item.is_active,
+        "created_at": item.created_at.isoformat(),
+        "updated_at": item.updated_at.isoformat(),
+    }
+
+
+def _serialize_audit_event(event: AuditLog) -> dict[str, Any]:
+    return {
+        "id": event.id,
+        "entity_type": event.entity_type,
+        "entity_id": event.entity_id,
+        "action": event.action,
+        "payload": event.payload,
+        "created_at": event.created_at.isoformat(),
+    }
+
+
+def _run_openai_connection_test(
+    *,
+    session: Session,
+    secret_box: SecretBox,
+    config: AppConfig,
+    default_client: OpenAIResponsesClient,
+) -> dict[str, Any]:
+    workspace = get_workspace(session)
+    if not workspace or not workspace.setup_completed_at:
+        raise ValueError("Workspace is not configured yet.")
+
+    api_key = secret_box.decrypt(workspace.openai_api_key_encrypted)
+    if not api_key:
+        raise ValueError("OpenAI API key is missing.")
+
+    client = _client_for_workspace(session, config, default_client)
+    schema = {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "ok": {"type": "boolean"},
+            "message": {"type": "string"},
+        },
+        "required": ["ok", "message"],
+    }
+    result = client.request_structured_json(
+        api_key=api_key,
+        model=workspace.openai_model,
+        system_prompt="Return strict JSON and confirm that the workspace can reach OpenAI.",
+        user_prompt="Return {ok: true, message: 'OpenAI connection is healthy.'} in the requested JSON schema.",
+        schema=schema,
+        schema_name="connection_check",
+        reasoning_effort=workspace.reasoning_effort,
+        verbosity=workspace.text_verbosity,
+        max_output_tokens=120,
+    )
+    parsed = result.parsed
+    if not parsed.get("ok"):
+        raise ValueError(parsed.get("message", "OpenAI connection test failed."))
+    return parsed

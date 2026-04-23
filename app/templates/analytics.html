@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="card-grid">
+  <article class="card metric">
+    <span>Total runs</span>
+    <strong>{{ snapshot.totals.runs }}</strong>
+  </article>
+  <article class="card metric">
+    <span>Success rate</span>
+    <strong>{{ snapshot.rates.success_rate }}%</strong>
+  </article>
+  <article class="card metric">
+    <span>Avg confidence</span>
+    <strong>{{ snapshot.averages.confidence if snapshot.averages.confidence is not none else '—' }}</strong>
+  </article>
+  <article class="card metric">
+    <span>Active storage</span>
+    <strong>{{ snapshot.totals.active_storage_items }}</strong>
+  </article>
+</section>
+
+<section class="split">
+  <article class="panel">
+    <div class="panel-header">
+      <div>
+        <div class="eyebrow">Decision mix</div>
+        <h3>Generation routing</h3>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Decision</th>
+            <th>Count</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for key, value in snapshot.breakdowns.decisions.items() %}
+          <tr>
+            <td>{{ key }}</td>
+            <td>{{ value }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="2">No generation runs yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="panel">
+    <div class="panel-header">
+      <div>
+        <div class="eyebrow">Risk levels</div>
+        <h3>How risky are incoming cases</h3>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Risk</th>
+            <th>Count</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for key, value in snapshot.breakdowns.risk_levels.items() %}
+          <tr>
+            <td>{{ key }}</td>
+            <td>{{ value }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="2">No risk data yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+</section>
+
+<section class="split">
+  <article class="panel">
+    <div class="panel-header">
+      <div>
+        <div class="eyebrow">Top issue types</div>
+        <h3>Most common problems in requests</h3>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Issue type</th>
+            <th>Count</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in snapshot.top_issue_types %}
+          <tr>
+            <td>{{ item.key }}</td>
+            <td>{{ item.count }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="2">No issue tags yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="panel">
+    <div class="panel-header">
+      <div>
+        <div class="eyebrow">Top reason codes</div>
+        <h3>Why runs are routed the way they are</h3>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Reason code</th>
+            <th>Count</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in snapshot.top_reason_codes %}
+          <tr>
+            <td>{{ item.key }}</td>
+            <td>{{ item.count }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="2">No reason codes yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+</section>
+
+<section class="split">
+  <article class="panel">
+    <div class="panel-header">
+      <div>
+        <div class="eyebrow">Top SKUs</div>
+        <h3>Products that show up most often</h3>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>SKU</th>
+            <th>Count</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in snapshot.top_skus %}
+          <tr>
+            <td>{{ item.key }}</td>
+            <td>{{ item.count }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="2">No SKU data yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="panel">
+    <div class="panel-header">
+      <div>
+        <div class="eyebrow">Storage coverage</div>
+        <h3>Active storage by item type</h3>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Storage type</th>
+            <th>Count</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for key, value in snapshot.breakdowns.storage_types.items() %}
+          <tr>
+            <td>{{ key }}</td>
+            <td>{{ value }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="2">No storage data yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+</section>
+{% endblock %}
+

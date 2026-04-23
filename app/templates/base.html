@@ -23,6 +23,8 @@
           <a class="{{ 'active' if current_page == 'playground' else '' }}" href="/playground">Playground</a>
           <a class="{{ 'active' if current_page == 'storage' else '' }}" href="/storage">Storage</a>
           <a class="{{ 'active' if current_page == 'history' else '' }}" href="/history">History</a>
+          <a class="{{ 'active' if current_page == 'analytics' else '' }}" href="/analytics">Analytics</a>
+          <a class="{{ 'active' if current_page == 'audit' else '' }}" href="/audit">Audit</a>
           <a class="{{ 'active' if current_page == 'settings' else '' }}" href="/settings">Settings</a>
         </nav>
 
@@ -44,6 +46,8 @@
               {% if current_page == 'playground' %}Reply Playground{% endif %}
               {% if current_page == 'storage' %}Brand Storage{% endif %}
               {% if current_page == 'history' %}Generation History{% endif %}
+              {% if current_page == 'analytics' %}Analytics{% endif %}
+              {% if current_page == 'audit' %}Audit Log{% endif %}
               {% if current_page == 'settings' %}Workspace Settings{% endif %}
             </h2>
           </div>
@@ -66,4 +70,3 @@
     </div>
   </body>
 </html>
-

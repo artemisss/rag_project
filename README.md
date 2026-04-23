@@ -7,8 +7,7 @@
 Локальный запуск:
 
 ```bash
-python3 -m pip install -r requirements.txt
-python3 -m uvicorn run:app --reload
+./scripts/run_local.sh
 ```
 
 После запуска откройте:
@@ -26,6 +25,8 @@ http://127.0.0.1:8000/welcome
 - retrieval по SQLite FTS5;
 - двухшаговый generation pipeline: classification + reply generation;
 - история запусков, аудит и управление prompt version.
+- analytics и отдельный audit log;
+- versioned JSON API для setup, generation, knowledge, history и analytics.
 
 ## Зачем нужен проект
 
@@ -86,16 +87,17 @@ Support-менеджер или контент-менеджер отправля
 - FastAPI backend;
 - SQLite как основная БД;
 - SQLAlchemy ORM и миграции;
-- APScheduler для фонового polling;
 - OpenAI Responses API с моделью `gpt-5.4`;
 - Structured Outputs для classification и generation;
 - RAG на SQLite FTS5 + метафильтры;
-- коннекторы для Wildberries и Яндекс.Маркета;
-- Ozon через адаптерный слой без вымышленных endpoint-ов;
-- админка с экранами очереди, знаний, правил, интеграций и аналитики.
+- ручная генерация ответа по отзыву из админки и API;
+- onboarding-gate, настройки бренда, prompt management, analytics и audit;
+- Brand Storage для policies, examples, product facts, FAQ и forbidden phrases;
+- админка с экранами `Dashboard`, `Playground`, `Storage`, `History`, `Analytics`, `Audit`, `Settings`.
 
 ### В MVP не входит
 
+- живые интеграции с маркетплейсами в этой версии репозитория;
 - полноценная multi-tenant billing-модель;
 - внешняя очередь задач и распределенный worker-кластер;
 - vector DB;
@@ -127,6 +129,8 @@ Audit + Metrics + Analytics
 ```
 
 ### Блок 1. Коннекторы маркетплейсов
+
+В текущей кодовой версии продукта этот блок **архитектурно предусмотрен, но не реализован намеренно**. Продукт фокусируется на ручной генерации ответа, управлении знаниями бренда и OpenAI-driven workflow без live-подключения к Ozon, Wildberries и Яндекс.Маркету.
 
 Задачи:
 

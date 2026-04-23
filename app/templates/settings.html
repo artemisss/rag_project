@@ -63,6 +63,17 @@
   </form>
 
   <section class="stack">
+    <form class="panel form-grid" method="post" action="/settings/test-openai">
+      <div class="panel-header">
+        <div>
+          <div class="eyebrow">Connection check</div>
+          <h3>Verify OpenAI access from the app</h3>
+        </div>
+      </div>
+      <p class="helper">Runs a small structured-output request with the currently stored OpenAI settings.</p>
+      <button class="button ghost" type="submit">Test OpenAI connection</button>
+    </form>
+
     <form class="panel form-grid" method="post" action="/settings/prompts">
       <div class="panel-header">
         <div>
@@ -99,4 +110,3 @@
   </section>
 </section>
 {% endblock %}
-
