@@ -54,7 +54,7 @@ def ensure_default_prompt_version(session: Session) -> PromptVersion:
         return active_prompt
 
     prompt = PromptVersion(
-        name="Default prompt set",
+        name="Базовый набор промптов",
         system_prompt=DEFAULT_SYSTEM_PROMPT,
         classifier_prompt=DEFAULT_CLASSIFIER_PROMPT,
         generator_prompt=DEFAULT_GENERATOR_PROMPT,
@@ -150,7 +150,7 @@ def update_prompts(
 ) -> PromptVersion:
     session.execute(update(PromptVersion).values(is_active=False))
     prompt = PromptVersion(
-        name=name.strip() or "Custom prompt set",
+        name=name.strip() or "Пользовательский набор промптов",
         system_prompt=system_prompt.strip(),
         classifier_prompt=classifier_prompt.strip(),
         generator_prompt=generator_prompt.strip(),

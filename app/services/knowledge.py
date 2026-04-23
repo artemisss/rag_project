@@ -109,8 +109,8 @@ def promote_run_to_example(
 
     item = KnowledgeItem(
         item_type=KnowledgeItemType.EXAMPLE,
-        title=title.strip() or f"Run #{run.id} example",
-        body=notes.strip() or "Promoted from generation history.",
+        title=title.strip() or f"Пример из запуска #{run.id}",
+        body=notes.strip() or "Добавлено из истории генераций.",
         context_text=run.review_text,
         answer_text=reply_text,
         marketplace=run.marketplace,
@@ -144,7 +144,7 @@ def seed_initial_knowledge(session: Session, workspace_do_not_say: str, workspac
         created.append(
             KnowledgeItemPayload(
                 item_type=KnowledgeItemType.POLICY,
-                title="Tone of voice",
+                title="Тон общения",
                 body=workspace.tone_of_voice,
                 priority=100,
             )
@@ -153,7 +153,7 @@ def seed_initial_knowledge(session: Session, workspace_do_not_say: str, workspac
         created.append(
             KnowledgeItemPayload(
                 item_type=KnowledgeItemType.POLICY,
-                title="Returns and exchanges",
+                title="Возвраты и обмены",
                 body=workspace.return_policy_summary,
                 issue_type="refund",
                 priority=90,
@@ -163,7 +163,7 @@ def seed_initial_knowledge(session: Session, workspace_do_not_say: str, workspac
         created.append(
             KnowledgeItemPayload(
                 item_type=KnowledgeItemType.FAQ,
-                title="How to direct customers to support",
+                title="Как переводить клиента в поддержку",
                 body=workspace.public_contact_hint,
                 priority=80,
             )
@@ -172,7 +172,7 @@ def seed_initial_knowledge(session: Session, workspace_do_not_say: str, workspac
         created.append(
             KnowledgeItemPayload(
                 item_type=KnowledgeItemType.POLICY,
-                title="Compensation policy",
+                title="Политика компенсаций",
                 body=workspace.compensation_policy,
                 issue_type="refund",
                 priority=85,
@@ -185,7 +185,7 @@ def seed_initial_knowledge(session: Session, workspace_do_not_say: str, workspac
             created.append(
                 KnowledgeItemPayload(
                     item_type=KnowledgeItemType.FORBIDDEN_PHRASE,
-                    title=f"Avoid phrase: {stripped[:48]}",
+                    title=f"Избегать формулировки: {stripped[:48]}",
                     body=stripped,
                     priority=95,
                 )

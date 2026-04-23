@@ -36,7 +36,7 @@ class FakeOpenAIClient:
         schema_name = kwargs["schema_name"]
         self.calls.append(schema_name)
         if schema_name == "connection_check":
-            parsed = {"ok": True, "message": "OpenAI connection is healthy."}
+            parsed = {"ok": True, "message": "Подключение к OpenAI работает."}
         elif schema_name == "review_classification":
             parsed = {
                 "intent": "complaint",
@@ -132,7 +132,7 @@ def test_setup_gate_redirects_until_workspace_is_configured(tmp_path: Path) -> N
 
     dashboard_response = client.get("/dashboard")
     assert dashboard_response.status_code == 200
-    assert "Overview" in dashboard_response.text
+    assert "Обзор" in dashboard_response.text
 
 
 def test_api_requires_setup_before_generation(tmp_path: Path) -> None:

@@ -36,25 +36,25 @@ class RetrievedContext:
     def to_prompt_block(self) -> str:
         def format_items(prefix: str, items: list[KnowledgeItem]) -> str:
             if not items:
-                return f"{prefix}: none"
+                return f"{prefix}: нет"
             lines = [prefix + ":"]
             for item in items:
                 base = f"[#{item.id}] {item.title}"
                 if item.item_type == KnowledgeItemType.EXAMPLE:
                     lines.append(
-                        f"- {base}\n  review: {item.context_text}\n  answer: {item.answer_text}\n  note: {item.body}"
+                        f"- {base}\n  отзыв: {item.context_text}\n  ответ: {item.answer_text}\n  примечание: {item.body}"
                     )
                 else:
                     lines.append(f"- {base}: {item.body}")
             return "\n".join(lines)
 
         blocks = [
-            f"Search terms: {', '.join(self.search_terms) if self.search_terms else 'none'}",
-            format_items("Policies", self.policies),
-            format_items("Product facts", self.product_facts),
+            f"Поисковые термины: {', '.join(self.search_terms) if self.search_terms else 'нет'}",
+            format_items("Политики", self.policies),
+            format_items("Факты о товаре", self.product_facts),
             format_items("FAQ", self.faq_items),
-            format_items("Forbidden phrases", self.forbidden_phrases),
-            format_items("Golden examples", self.examples),
+            format_items("Запрещенные формулировки", self.forbidden_phrases),
+            format_items("Удачные примеры", self.examples),
         ]
         return "\n\n".join(blocks)
 

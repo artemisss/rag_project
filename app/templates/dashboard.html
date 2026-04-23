@@ -3,19 +3,19 @@
 {% block content %}
 <section class="card-grid">
   <article class="card metric">
-    <span>Total runs</span>
+    <span>Всего запусков</span>
     <strong>{{ stats.total_runs }}</strong>
   </article>
   <article class="card metric">
-    <span>Storage items</span>
+    <span>Элементов хранилища</span>
     <strong>{{ stats.total_items }}</strong>
   </article>
   <article class="card metric">
-    <span>Needs review</span>
+    <span>Ждут модерации</span>
     <strong>{{ stats.open_runs }}</strong>
   </article>
   <article class="card metric">
-    <span>Golden examples</span>
+    <span>Удачных примеров</span>
     <strong>{{ stats.examples }}</strong>
   </article>
 </section>
@@ -24,19 +24,19 @@
   <article class="panel">
     <div class="panel-header">
       <div>
-        <div class="eyebrow">Recent drafts</div>
-        <h3>Latest generation activity</h3>
+        <div class="eyebrow">Последние черновики</div>
+        <h3>Недавняя активность генерации</h3>
       </div>
-      <a class="button ghost" href="/history">Open history</a>
+      <a class="button ghost" href="/history">Открыть историю</a>
     </div>
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
             <th>ID</th>
-            <th>Rating</th>
-            <th>Decision</th>
-            <th>Risk</th>
+            <th>Оценка</th>
+            <th>Маршрут</th>
+            <th>Риск</th>
             <th>SKU</th>
             <th></th>
           </tr>
@@ -46,14 +46,14 @@
           <tr>
             <td>#{{ run.id }}</td>
             <td>{{ run.rating }}</td>
-            <td>{{ run.decision.value if run.decision else 'failed' }}</td>
-            <td>{{ run.risk_level or 'n/a' }}</td>
+            <td>{{ decision_label(run.decision.value) if run.decision else status_label(run.status.value) }}</td>
+            <td>{{ risk_label(run.risk_level) }}</td>
             <td>{{ run.product_sku or '—' }}</td>
-            <td><a href="/history?run_id={{ run.id }}">Open</a></td>
+            <td><a href="/history?run_id={{ run.id }}">Открыть</a></td>
           </tr>
           {% else %}
           <tr>
-            <td colspan="6">No runs yet. Start from the playground.</td>
+            <td colspan="6">Запусков пока нет. Начните с экрана генерации.</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -64,20 +64,20 @@
   <article class="panel">
     <div class="panel-header">
       <div>
-        <div class="eyebrow">Audit log</div>
-        <h3>Latest workspace events</h3>
+        <div class="eyebrow">Журнал аудита</div>
+        <h3>Последние события проекта</h3>
       </div>
-      <a class="button ghost" href="/settings">Workspace</a>
+      <a class="button ghost" href="/settings">Настройки</a>
     </div>
     <div class="activity-list">
       {% for event in recent_audit %}
       <div class="activity-item">
-        <strong>{{ event.action }}</strong>
-        <span>{{ event.entity_type }} / {{ event.entity_id }}</span>
+        <strong>{{ action_label(event.action) }}</strong>
+        <span>{{ entity_label(event.entity_type) }} / {{ event.entity_id }}</span>
         <small>{{ event.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
       </div>
       {% else %}
-      <div class="empty-state">No audit events yet.</div>
+      <div class="empty-state">Событий аудита пока нет.</div>
       {% endfor %}
     </div>
   </article>
@@ -85,25 +85,24 @@
 
 <section class="split">
   <article class="panel">
-    <div class="eyebrow">Storage first</div>
-    <h3>How the product uses your brand storage</h3>
+    <div class="eyebrow">Сначала хранилище</div>
+    <h3>Как продукт использует хранилище бренда</h3>
     <ul class="check-list">
-      <li>Policies define mandatory wording and escalation rules.</li>
-      <li>Golden examples steer style without hard-copying answers.</li>
-      <li>Product facts and FAQ items add SKU-specific guidance.</li>
-      <li>Forbidden phrases are injected as negative constraints before generation.</li>
+      <li>Политики задают обязательные формулировки и правила эскалации.</li>
+      <li>Удачные примеры направляют стиль, но не копируются дословно.</li>
+      <li>Факты о товаре и FAQ добавляют SKU-специфичный контекст.</li>
+      <li>Запрещенные формулировки уходят в генерацию как жесткие ограничения.</li>
     </ul>
   </article>
   <article class="panel">
-    <div class="eyebrow">Recommended workflow</div>
-    <h3>Daily operator loop</h3>
+    <div class="eyebrow">Рекомендуемый цикл</div>
+    <h3>Ежедневная работа оператора</h3>
     <ol class="ordered-list">
-      <li>Generate a reply in the playground.</li>
-      <li>Inspect retrieved storage and the decision route.</li>
-      <li>Promote strong replies into examples from history.</li>
-      <li>Adjust prompts and policies only when patterns repeat.</li>
+      <li>Сгенерируйте ответ в экране генерации.</li>
+      <li>Проверьте подтянутое хранилище и выбранный маршрут обработки.</li>
+      <li>Сильные ответы переносите из истории в удачные примеры.</li>
+      <li>Промпты и политики меняйте только когда виден повторяющийся паттерн.</li>
     </ol>
   </article>
 </section>
 {% endblock %}
-

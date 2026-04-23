@@ -1,0 +1,139 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: R
+      - generic [ref=e6]:
+        - generic [ref=e7]: ReviewOps AI
+        - heading "ReviewOps AI" [level=1] [ref=e8]
+    - navigation [ref=e9]:
+      - link "Dashboard" [ref=e10] [cursor=pointer]:
+        - /url: /dashboard
+      - link "Playground" [ref=e11] [cursor=pointer]:
+        - /url: /playground
+      - link "Storage" [ref=e12] [cursor=pointer]:
+        - /url: /storage
+      - link "History" [ref=e13] [cursor=pointer]:
+        - /url: /history
+      - link "Analytics" [ref=e14] [cursor=pointer]:
+        - /url: /analytics
+      - link "Audit" [ref=e15] [cursor=pointer]:
+        - /url: /audit
+      - link "Settings" [ref=e16] [cursor=pointer]:
+        - /url: /settings
+    - generic [ref=e17]:
+      - generic [ref=e18]: Brand
+      - strong [ref=e19]: Тестовый бренд
+      - paragraph [ref=e20]: Бренд для проверки русской админки и генерации ответов.
+  - main [ref=e21]:
+    - generic [ref=e22]:
+      - generic [ref=e23]:
+        - generic [ref=e24]: Internal AI customer care panel
+        - heading "Workspace Settings" [level=2] [ref=e25]
+      - generic [ref=e26]:
+        - link "New draft" [ref=e27] [cursor=pointer]:
+          - /url: /playground
+        - link "Open storage" [ref=e28] [cursor=pointer]:
+          - /url: /storage
+    - generic [ref=e29]:
+      - generic [ref=e30]:
+        - generic [ref=e32]:
+          - generic [ref=e33]: Workspace profile
+          - heading "Brand, model, and moderation settings" [level=3] [ref=e34]
+        - generic [ref=e35]:
+          - generic [ref=e36]:
+            - generic [ref=e37]: Project name
+            - textbox "Project name" [ref=e38]: ReviewOps AI
+          - generic [ref=e39]:
+            - generic [ref=e40]: Brand name
+            - textbox "Brand name" [ref=e41]: Тестовый бренд
+        - generic [ref=e42]:
+          - generic [ref=e43]: Brand description
+          - textbox "Brand description" [ref=e44]: Бренд для проверки русской админки и генерации ответов.
+        - generic [ref=e45]:
+          - generic [ref=e46]: Tone of voice
+          - textbox "Tone of voice" [ref=e47]: Спокойный, уважительный, деловой тон.
+        - generic [ref=e48]:
+          - generic [ref=e49]: Brand promises
+          - textbox "Brand promises" [ref=e50]
+        - generic [ref=e51]:
+          - generic [ref=e52]: Support signature
+          - textbox "Support signature" [ref=e53]
+        - generic [ref=e54]:
+          - generic [ref=e55]: Public contact hint
+          - textbox "Public contact hint" [ref=e56]
+        - generic [ref=e57]:
+          - generic [ref=e58]: Return policy summary
+          - textbox "Return policy summary" [ref=e59]
+        - generic [ref=e60]:
+          - generic [ref=e61]: Compensation policy
+          - textbox "Compensation policy" [ref=e62]
+        - generic [ref=e63]:
+          - generic [ref=e64]: Forbidden phrases
+          - textbox "Forbidden phrases" [ref=e65]
+        - generic [ref=e66]:
+          - generic [ref=e67]:
+            - generic [ref=e68]: Default language
+            - textbox "Default language" [ref=e69]: ru
+          - generic [ref=e70]:
+            - generic [ref=e71]: Auto threshold
+            - spinbutton "Auto threshold" [ref=e72]: "0.9"
+        - generic [ref=e73]: OpenAI connection
+        - generic [ref=e74]: "Current key: *******"
+        - generic [ref=e75]:
+          - generic [ref=e76]: New API key
+          - textbox "New API key" [ref=e77]:
+            - /placeholder: Leave empty to keep current key
+        - generic [ref=e78]:
+          - generic [ref=e79]:
+            - generic [ref=e80]: Model
+            - textbox "Model" [ref=e81]: gpt-5.4
+          - generic [ref=e82]:
+            - generic [ref=e83]: Base URL
+            - textbox "Base URL" [ref=e84]: https://api.openai.com/v1
+        - generic [ref=e85]:
+          - generic [ref=e86]:
+            - generic [ref=e87]: Reasoning effort
+            - combobox "Reasoning effort" [ref=e88]:
+              - option "none"
+              - option "low" [selected]
+              - option "medium"
+              - option "high"
+          - generic [ref=e89]:
+            - generic [ref=e90]: Verbosity
+            - combobox "Verbosity" [ref=e91]:
+              - option "low"
+              - option "medium" [selected]
+              - option "high"
+        - button "Save workspace settings" [ref=e92]
+      - generic [ref=e93]:
+        - generic [ref=e94]:
+          - generic [ref=e96]:
+            - generic [ref=e97]: Connection check
+            - heading "Verify OpenAI access from the app" [level=3] [ref=e98]
+          - paragraph [ref=e99]: Runs a small structured-output request with the currently stored OpenAI settings.
+          - button "Test OpenAI connection" [ref=e100]
+        - generic [ref=e101]:
+          - generic [ref=e103]:
+            - generic [ref=e104]: Prompt pack
+            - heading "Publish a new active prompt version" [level=3] [ref=e105]
+          - generic [ref=e106]:
+            - generic [ref=e107]: Version name
+            - textbox "Version name" [ref=e108]: Default prompt set
+          - generic [ref=e109]:
+            - generic [ref=e110]: System prompt
+            - textbox "System prompt" [ref=e111]: "You are ReviewOps AI, an internal assistant that drafts brand-safe replies to customer reviews. Non-negotiable rules: - Never invent facts about the order, refund, shipment status, compensation, or product guarantees. - Never admit legal fault or promise compensation unless the provided brand rules explicitly allow it. - Stay polite, calm, and concise. - Do not attack or blame the customer. - Use the provided brand storage as the main source of truth. - If the case is risky, preserve the risk in the output instead of forcing a cheerful answer."
+          - generic [ref=e112]:
+            - generic [ref=e113]: Classifier prompt
+            - textbox "Classifier prompt" [ref=e114]: "Classify the review for a customer care workflow. Focus on: - customer intent - issue types - sentiment - risk level - whether a human should review the answer - why the answer could be risky Keep the result operational, not literary."
+          - generic [ref=e115]:
+            - generic [ref=e116]: Generator prompt
+            - textbox "Generator prompt" [ref=e117]: "Write a marketplace-ready draft in the brand voice. Requirements: - sound human and specific - reference the customer's problem without copying them verbatim - follow policies and forbidden phrases strictly - use retrieved examples as inspiration, not as text to copy - if the situation needs human handling, still provide the safest possible draft"
+          - button "Publish prompt version" [ref=e118]
+        - article [ref=e119]:
+          - generic [ref=e121]:
+            - generic [ref=e122]: Prompt history
+            - heading "Recently published versions" [level=3] [ref=e123]
+          - generic [ref=e125]:
+            - strong [ref=e126]: Default prompt set
+            - generic [ref=e127]: ID 1 / active
+            - generic [ref=e128]: 2026-04-23 20:42

@@ -1,0 +1,102 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: R
+      - generic [ref=e6]:
+        - generic [ref=e7]: ReviewOps AI
+        - heading "ReviewOps AI" [level=1] [ref=e8]
+    - navigation [ref=e9]:
+      - link "Dashboard" [ref=e10] [cursor=pointer]:
+        - /url: /dashboard
+      - link "Playground" [ref=e11] [cursor=pointer]:
+        - /url: /playground
+      - link "Storage" [ref=e12] [cursor=pointer]:
+        - /url: /storage
+      - link "History" [ref=e13] [cursor=pointer]:
+        - /url: /history
+      - link "Analytics" [ref=e14] [cursor=pointer]:
+        - /url: /analytics
+      - link "Audit" [ref=e15] [cursor=pointer]:
+        - /url: /audit
+      - link "Settings" [ref=e16] [cursor=pointer]:
+        - /url: /settings
+    - generic [ref=e17]:
+      - generic [ref=e18]: Brand
+      - strong [ref=e19]: Тестовый бренд
+      - paragraph [ref=e20]: Бренд для проверки русской админки и генерации ответов.
+  - main [ref=e21]:
+    - generic [ref=e22]:
+      - generic [ref=e23]:
+        - generic [ref=e24]: Internal AI customer care panel
+        - heading "Overview" [level=2] [ref=e25]
+      - generic [ref=e26]:
+        - link "New draft" [ref=e27] [cursor=pointer]:
+          - /url: /playground
+        - link "Open storage" [ref=e28] [cursor=pointer]:
+          - /url: /storage
+    - generic [ref=e29]:
+      - article [ref=e30]:
+        - text: Total runs
+        - strong [ref=e31]: "0"
+      - article [ref=e32]:
+        - text: Storage items
+        - strong [ref=e33]: "1"
+      - article [ref=e34]:
+        - text: Needs review
+        - strong [ref=e35]: "0"
+      - article [ref=e36]:
+        - text: Golden examples
+        - strong [ref=e37]: "0"
+    - generic [ref=e38]:
+      - article [ref=e39]:
+        - generic [ref=e40]:
+          - generic [ref=e41]:
+            - generic [ref=e42]: Recent drafts
+            - heading "Latest generation activity" [level=3] [ref=e43]
+          - link "Open history" [ref=e44] [cursor=pointer]:
+            - /url: /history
+        - table [ref=e46]:
+          - rowgroup [ref=e47]:
+            - row "ID Rating Decision Risk SKU" [ref=e48]:
+              - columnheader "ID" [ref=e49]
+              - columnheader "Rating" [ref=e50]
+              - columnheader "Decision" [ref=e51]
+              - columnheader "Risk" [ref=e52]
+              - columnheader "SKU" [ref=e53]
+              - columnheader [ref=e54]
+          - rowgroup [ref=e55]:
+            - row "No runs yet. Start from the playground." [ref=e56]:
+              - cell "No runs yet. Start from the playground." [ref=e57]
+      - article [ref=e58]:
+        - generic [ref=e59]:
+          - generic [ref=e60]:
+            - generic [ref=e61]: Audit log
+            - heading "Latest workspace events" [level=3] [ref=e62]
+          - link "Workspace" [ref=e63] [cursor=pointer]:
+            - /url: /settings
+        - generic [ref=e64]:
+          - generic [ref=e65]:
+            - strong [ref=e66]: created
+            - generic [ref=e67]: knowledge_item / 1
+            - generic [ref=e68]: 2026-04-23 20:52
+          - generic [ref=e69]:
+            - strong [ref=e70]: setup_completed
+            - generic [ref=e71]: workspace / 1
+            - generic [ref=e72]: 2026-04-23 20:52
+    - generic [ref=e73]:
+      - article [ref=e74]:
+        - generic [ref=e75]: Storage first
+        - heading "How the product uses your brand storage" [level=3] [ref=e76]
+        - list [ref=e77]:
+          - listitem [ref=e78]: Policies define mandatory wording and escalation rules.
+          - listitem [ref=e79]: Golden examples steer style without hard-copying answers.
+          - listitem [ref=e80]: Product facts and FAQ items add SKU-specific guidance.
+          - listitem [ref=e81]: Forbidden phrases are injected as negative constraints before generation.
+      - article [ref=e82]:
+        - generic [ref=e83]: Recommended workflow
+        - heading "Daily operator loop" [level=3] [ref=e84]
+        - list [ref=e85]:
+          - listitem [ref=e86]: Generate a reply in the playground.
+          - listitem [ref=e87]: Inspect retrieved storage and the decision route.
+          - listitem [ref=e88]: Promote strong replies into examples from history.
+          - listitem [ref=e89]: Adjust prompts and policies only when patterns repeat.

@@ -4,8 +4,8 @@
 <section class="panel">
   <div class="panel-header">
     <div>
-      <div class="eyebrow">Audit trail</div>
-      <h3>Latest workspace actions</h3>
+      <div class="eyebrow">Трасса аудита</div>
+      <h3>Последние действия в проекте</h3>
     </div>
   </div>
 
@@ -13,18 +13,18 @@
     <table>
       <thead>
         <tr>
-          <th>When</th>
-          <th>Action</th>
-          <th>Entity</th>
-          <th>Payload</th>
+          <th>Когда</th>
+          <th>Действие</th>
+          <th>Сущность</th>
+          <th>Данные</th>
         </tr>
       </thead>
       <tbody>
         {% for event in events %}
         <tr>
           <td>{{ event.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
-          <td>{{ event.action }}</td>
-          <td>{{ event.entity_type }} / {{ event.entity_id }}</td>
+          <td>{{ action_label(event.action) }}</td>
+          <td>{{ entity_label(event.entity_type) }} / {{ event.entity_id }}</td>
           <td>
             {% if event.payload %}
             <div class="table-subline">{{ event.payload | tojson }}</div>
@@ -35,7 +35,7 @@
         </tr>
         {% else %}
         <tr>
-          <td colspan="4">No audit events yet.</td>
+          <td colspan="4">Событий аудита пока нет.</td>
         </tr>
         {% endfor %}
       </tbody>

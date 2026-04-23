@@ -1,0 +1,102 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: R
+      - generic [ref=e6]:
+        - generic [ref=e7]: ReviewOps AI
+        - heading "ReviewOps AI" [level=1] [ref=e8]
+    - navigation [ref=e9]:
+      - link "Обзор" [ref=e10] [cursor=pointer]:
+        - /url: /dashboard
+      - link "Генерация" [ref=e11] [cursor=pointer]:
+        - /url: /playground
+      - link "Хранилище" [ref=e12] [cursor=pointer]:
+        - /url: /storage
+      - link "История" [ref=e13] [cursor=pointer]:
+        - /url: /history
+      - link "Аналитика" [ref=e14] [cursor=pointer]:
+        - /url: /analytics
+      - link "Аудит" [ref=e15] [cursor=pointer]:
+        - /url: /audit
+      - link "Настройки" [ref=e16] [cursor=pointer]:
+        - /url: /settings
+    - generic [ref=e17]:
+      - generic [ref=e18]: Бренд
+      - strong [ref=e19]: Тестовый бренд
+      - paragraph [ref=e20]: Бренд для проверки русской админки и генерации ответов.
+  - main [ref=e21]:
+    - generic [ref=e22]:
+      - generic [ref=e23]:
+        - generic [ref=e24]: Внутренняя AI-панель customer care
+        - heading "Обзор" [level=2] [ref=e25]
+      - generic [ref=e26]:
+        - link "Новый черновик" [ref=e27] [cursor=pointer]:
+          - /url: /playground
+        - link "Открыть хранилище" [ref=e28] [cursor=pointer]:
+          - /url: /storage
+    - generic [ref=e29]:
+      - article [ref=e30]:
+        - text: Всего запусков
+        - strong [ref=e31]: "0"
+      - article [ref=e32]:
+        - text: Элементов хранилища
+        - strong [ref=e33]: "1"
+      - article [ref=e34]:
+        - text: Ждут модерации
+        - strong [ref=e35]: "0"
+      - article [ref=e36]:
+        - text: Удачных примеров
+        - strong [ref=e37]: "0"
+    - generic [ref=e38]:
+      - article [ref=e39]:
+        - generic [ref=e40]:
+          - generic [ref=e41]:
+            - generic [ref=e42]: Последние черновики
+            - heading "Недавняя активность генерации" [level=3] [ref=e43]
+          - link "Открыть историю" [ref=e44] [cursor=pointer]:
+            - /url: /history
+        - table [ref=e46]:
+          - rowgroup [ref=e47]:
+            - row "ID Оценка Маршрут Риск SKU" [ref=e48]:
+              - columnheader "ID" [ref=e49]
+              - columnheader "Оценка" [ref=e50]
+              - columnheader "Маршрут" [ref=e51]
+              - columnheader "Риск" [ref=e52]
+              - columnheader "SKU" [ref=e53]
+              - columnheader [ref=e54]
+          - rowgroup [ref=e55]:
+            - row "Запусков пока нет. Начните с экрана генерации." [ref=e56]:
+              - cell "Запусков пока нет. Начните с экрана генерации." [ref=e57]
+      - article [ref=e58]:
+        - generic [ref=e59]:
+          - generic [ref=e60]:
+            - generic [ref=e61]: Журнал аудита
+            - heading "Последние события проекта" [level=3] [ref=e62]
+          - link "Настройки" [ref=e63] [cursor=pointer]:
+            - /url: /settings
+        - generic [ref=e64]:
+          - generic [ref=e65]:
+            - strong [ref=e66]: Создано
+            - generic [ref=e67]: Элемент хранилища / 1
+            - generic [ref=e68]: 2026-04-23 20:52
+          - generic [ref=e69]:
+            - strong [ref=e70]: Первичная настройка завершена
+            - generic [ref=e71]: Проект / 1
+            - generic [ref=e72]: 2026-04-23 20:52
+    - generic [ref=e73]:
+      - article [ref=e74]:
+        - generic [ref=e75]: Сначала хранилище
+        - heading "Как продукт использует хранилище бренда" [level=3] [ref=e76]
+        - list [ref=e77]:
+          - listitem [ref=e78]: Политики задают обязательные формулировки и правила эскалации.
+          - listitem [ref=e79]: Удачные примеры направляют стиль, но не копируются дословно.
+          - listitem [ref=e80]: Факты о товаре и FAQ добавляют SKU-специфичный контекст.
+          - listitem [ref=e81]: Запрещенные формулировки уходят в генерацию как жесткие ограничения.
+      - article [ref=e82]:
+        - generic [ref=e83]: Рекомендуемый цикл
+        - heading "Ежедневная работа оператора" [level=3] [ref=e84]
+        - list [ref=e85]:
+          - listitem [ref=e86]: Сгенерируйте ответ в экране генерации.
+          - listitem [ref=e87]: Проверьте подтянутое хранилище и выбранный маршрут обработки.
+          - listitem [ref=e88]: Сильные ответы переносите из истории в удачные примеры.
+          - listitem [ref=e89]: Промпты и политики меняйте только когда виден повторяющийся паттерн.

@@ -5,105 +5,105 @@
   <form class="panel form-grid" method="post" action="/settings/workspace">
     <div class="panel-header">
       <div>
-        <div class="eyebrow">Workspace profile</div>
-        <h3>Brand, model, and moderation settings</h3>
+        <div class="eyebrow">Профиль проекта</div>
+        <h3>Настройки бренда, модели и модерации</h3>
       </div>
     </div>
 
     <div class="two-col">
-      <label><span>Project name</span><input name="project_name" value="{{ workspace.project_name }}" required /></label>
-      <label><span>Brand name</span><input name="brand_name" value="{{ workspace.brand_name }}" required /></label>
+      <label><span>Название проекта</span><input name="project_name" value="{{ workspace.project_name }}" required /></label>
+      <label><span>Название бренда</span><input name="brand_name" value="{{ workspace.brand_name }}" required /></label>
     </div>
-    <label><span>Brand description</span><textarea name="brand_description" rows="3">{{ workspace.brand_description }}</textarea></label>
-    <label><span>Tone of voice</span><textarea name="tone_of_voice" rows="4">{{ workspace.tone_of_voice }}</textarea></label>
-    <label><span>Brand promises</span><textarea name="brand_promises" rows="3">{{ workspace.brand_promises }}</textarea></label>
-    <label><span>Support signature</span><textarea name="support_signature" rows="2">{{ workspace.support_signature }}</textarea></label>
-    <label><span>Public contact hint</span><textarea name="public_contact_hint" rows="2">{{ workspace.public_contact_hint }}</textarea></label>
-    <label><span>Return policy summary</span><textarea name="return_policy_summary" rows="3">{{ workspace.return_policy_summary }}</textarea></label>
-    <label><span>Compensation policy</span><textarea name="compensation_policy" rows="3">{{ workspace.compensation_policy }}</textarea></label>
-    <label><span>Forbidden phrases</span><textarea name="do_not_say" rows="4">{{ workspace.do_not_say }}</textarea></label>
+    <label><span>Описание бренда</span><textarea name="brand_description" rows="3">{{ workspace.brand_description }}</textarea></label>
+    <label><span>Тон общения</span><textarea name="tone_of_voice" rows="4">{{ workspace.tone_of_voice }}</textarea></label>
+    <label><span>Обещания бренда</span><textarea name="brand_promises" rows="3">{{ workspace.brand_promises }}</textarea></label>
+    <label><span>Подпись поддержки</span><textarea name="support_signature" rows="2">{{ workspace.support_signature }}</textarea></label>
+    <label><span>Публичная подсказка для контакта</span><textarea name="public_contact_hint" rows="2">{{ workspace.public_contact_hint }}</textarea></label>
+    <label><span>Краткое правило по возвратам</span><textarea name="return_policy_summary" rows="3">{{ workspace.return_policy_summary }}</textarea></label>
+    <label><span>Политика компенсаций</span><textarea name="compensation_policy" rows="3">{{ workspace.compensation_policy }}</textarea></label>
+    <label><span>Запрещенные формулировки</span><textarea name="do_not_say" rows="4">{{ workspace.do_not_say }}</textarea></label>
 
     <div class="two-col">
       <label>
-        <span>Default language</span>
+        <span>Язык по умолчанию</span>
         <input name="default_language" value="{{ workspace.default_language }}" />
       </label>
       <label>
-        <span>Auto threshold</span>
+        <span>Порог автопубликации</span>
         <input name="auto_publish_threshold" type="number" min="0" max="1" step="0.01" value="{{ workspace.auto_publish_threshold }}" />
       </label>
     </div>
 
-    <div class="section-title">OpenAI connection</div>
-    <div class="helper">Current key: {{ masked_openai_key }}</div>
-    <label><span>New API key</span><input name="openai_api_key" type="password" placeholder="Leave empty to keep current key" /></label>
+    <div class="section-title">Подключение OpenAI</div>
+    <div class="helper">Текущий ключ: {{ masked_openai_key }}</div>
+    <label><span>Новый API key</span><input name="openai_api_key" type="password" placeholder="Оставьте пустым, чтобы сохранить текущий" /></label>
     <div class="two-col">
-      <label><span>Model</span><input name="openai_model" value="{{ workspace.openai_model }}" /></label>
-      <label><span>Base URL</span><input name="openai_base_url" value="{{ workspace.openai_base_url }}" /></label>
+      <label><span>Модель</span><input name="openai_model" value="{{ workspace.openai_model }}" /></label>
+      <label><span>Базовый URL</span><input name="openai_base_url" value="{{ workspace.openai_base_url }}" /></label>
     </div>
     <div class="two-col">
       <label>
-        <span>Reasoning effort</span>
+        <span>Уровень рассуждений</span>
         <select name="reasoning_effort">
           {% for option in ['none', 'low', 'medium', 'high'] %}
-          <option value="{{ option }}" {% if workspace.reasoning_effort == option %}selected{% endif %}>{{ option }}</option>
+          <option value="{{ option }}" {% if workspace.reasoning_effort == option %}selected{% endif %}>{{ reasoning_label(option) }}</option>
           {% endfor %}
         </select>
       </label>
       <label>
-        <span>Verbosity</span>
+        <span>Подробность ответа</span>
         <select name="text_verbosity">
           {% for option in ['low', 'medium', 'high'] %}
-          <option value="{{ option }}" {% if workspace.text_verbosity == option %}selected{% endif %}>{{ option }}</option>
+          <option value="{{ option }}" {% if workspace.text_verbosity == option %}selected{% endif %}>{{ verbosity_label(option) }}</option>
           {% endfor %}
         </select>
       </label>
     </div>
-    <button class="button primary" type="submit">Save workspace settings</button>
+    <button class="button primary" type="submit">Сохранить настройки проекта</button>
   </form>
 
   <section class="stack">
     <form class="panel form-grid" method="post" action="/settings/test-openai">
       <div class="panel-header">
         <div>
-          <div class="eyebrow">Connection check</div>
-          <h3>Verify OpenAI access from the app</h3>
+          <div class="eyebrow">Проверка соединения</div>
+          <h3>Проверить доступ к OpenAI из приложения</h3>
         </div>
       </div>
-      <p class="helper">Runs a small structured-output request with the currently stored OpenAI settings.</p>
-      <button class="button ghost" type="submit">Test OpenAI connection</button>
+      <p class="helper">Запускает небольшой structured-output запрос с текущими настройками OpenAI.</p>
+      <button class="button ghost" type="submit">Проверить подключение к OpenAI</button>
     </form>
 
     <form class="panel form-grid" method="post" action="/settings/prompts">
       <div class="panel-header">
         <div>
-          <div class="eyebrow">Prompt pack</div>
-          <h3>Publish a new active prompt version</h3>
+          <div class="eyebrow">Пакет промптов</div>
+          <h3>Опубликовать новую активную версию</h3>
         </div>
       </div>
-      <label><span>Version name</span><input name="prompt_name" value="{{ prompt.name }}" /></label>
+      <label><span>Название версии</span><input name="prompt_name" value="{{ prompt.name }}" /></label>
       <label><span>System prompt</span><textarea name="system_prompt" rows="8">{{ prompt.system_prompt }}</textarea></label>
       <label><span>Classifier prompt</span><textarea name="classifier_prompt" rows="8">{{ prompt.classifier_prompt }}</textarea></label>
       <label><span>Generator prompt</span><textarea name="generator_prompt" rows="8">{{ prompt.generator_prompt }}</textarea></label>
-      <button class="button primary" type="submit">Publish prompt version</button>
+      <button class="button primary" type="submit">Опубликовать версию промптов</button>
     </form>
 
     <article class="panel">
       <div class="panel-header">
         <div>
-          <div class="eyebrow">Prompt history</div>
-          <h3>Recently published versions</h3>
+          <div class="eyebrow">История промптов</div>
+          <h3>Недавно опубликованные версии</h3>
         </div>
       </div>
       <div class="activity-list">
         {% for version in prompt_versions %}
         <div class="activity-item">
           <strong>{{ version.name }}</strong>
-          <span>ID {{ version.id }}{% if version.is_active %} / active{% endif %}</span>
+          <span>ID {{ version.id }}{% if version.is_active %} / активна{% endif %}</span>
           <small>{{ version.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
         </div>
         {% else %}
-        <div class="empty-state">No prompt versions found.</div>
+        <div class="empty-state">Версии промптов пока не найдены.</div>
         {% endfor %}
       </div>
     </article>

@@ -91,11 +91,11 @@ def generate_review_reply(
 ) -> GenerationPipelineResult:
     workspace = get_workspace(session)
     if not workspace or not workspace.setup_completed_at:
-        raise ValueError("Workspace is not configured yet.")
+        raise ValueError("Проект еще не настроен.")
 
     api_key = get_openai_api_key(workspace, secret_box)
     if not api_key:
-        raise ValueError("OpenAI API key is missing or could not be decrypted.")
+        raise ValueError("OpenAI API key отсутствует или не удалось его расшифровать.")
 
     prompt_version = get_active_prompt_version(session)
 
@@ -368,4 +368,3 @@ def detect_issue_types(review_text: str) -> list[str]:
         if any(pattern in text for pattern in patterns):
             found.append(issue_type)
     return found or ["other"]
-

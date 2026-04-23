@@ -3,85 +3,86 @@
 {% block content %}
 <section class="welcome-hero">
   <div class="welcome-copy">
-    <div class="eyebrow">First launch</div>
-    <h2>Configure the workspace before anyone can generate replies</h2>
+    <div class="eyebrow">Первый запуск</div>
+    <h2>Настройте проект, прежде чем команда начнет генерировать ответы</h2>
     <p>
-      This setup defines the brand voice, storage rules, OpenAI access, and the
-      moderation threshold. Until setup is complete, the product stays locked.
+      Здесь задаются голос бренда, правила хранилища, доступ к OpenAI и порог
+      автопубликации. Пока первичная настройка не завершена, продукт остается
+      заблокированным.
     </p>
     <div class="card-grid compact">
       <article class="card glass">
-        <h3>1. Brand core</h3>
-        <p>Set tone of voice, promises, return guidance, support signature, and forbidden language.</p>
+        <h3>1. Основа бренда</h3>
+        <p>Задайте тон общения, обещания бренда, правила возвратов, подпись и запрещенные формулировки.</p>
       </article>
       <article class="card glass">
         <h3>2. OpenAI</h3>
-        <p>Add the API key and default model. The app uses Responses API with structured outputs.</p>
+        <p>Добавьте API key и модель по умолчанию. Приложение использует Responses API и structured outputs.</p>
       </article>
       <article class="card glass">
-        <h3>3. Storage seeding</h3>
-        <p>On save, the app creates an initial storage layer from your brand rules and forbidden phrases.</p>
+        <h3>3. Стартовое хранилище</h3>
+        <p>После сохранения система создаст первый слой знаний из правил бренда и запрещенных формулировок.</p>
       </article>
     </div>
   </div>
 
   <form class="panel form-grid" method="post" action="/welcome">
     <section>
-      <div class="section-title">Workspace</div>
+      <div class="section-title">Проект</div>
       <label>
-        <span>Project name</span>
+        <span>Название проекта</span>
         <input name="project_name" value="ReviewOps AI" required />
       </label>
       <label>
-        <span>Brand name</span>
-        <input name="brand_name" placeholder="Acme Market Brand" required />
+        <span>Название бренда</span>
+        <input name="brand_name" placeholder="Например, Acme Market" required />
       </label>
       <label>
-        <span>Brand description</span>
-        <textarea name="brand_description" rows="3" placeholder="What the brand sells and how it positions itself"></textarea>
+        <span>Описание бренда</span>
+        <textarea name="brand_description" rows="3" placeholder="Что продает бренд и как он позиционируется"></textarea>
       </label>
       <label>
-        <span>Tone of voice</span>
-        <textarea name="tone_of_voice" rows="4" placeholder="Calm, warm, concise, solution-first. No slang."></textarea>
+        <span>Тон общения</span>
+        <textarea name="tone_of_voice" rows="4" placeholder="Спокойный, уважительный, по делу, с фокусом на решение. Без сленга."></textarea>
       </label>
       <label>
-        <span>Brand promises</span>
-        <textarea name="brand_promises" rows="3" placeholder="What the brand can safely promise in public replies"></textarea>
+        <span>Обещания бренда</span>
+        <textarea name="brand_promises" rows="3" placeholder="Что бренд может безопасно обещать в публичных ответах"></textarea>
       </label>
       <label>
-        <span>Support signature</span>
-        <textarea name="support_signature" rows="2" placeholder="How replies should end"></textarea>
+        <span>Подпись поддержки</span>
+        <textarea name="support_signature" rows="2" placeholder="Чем должен заканчиваться ответ"></textarea>
       </label>
     </section>
 
     <section>
-      <div class="section-title">Policies</div>
+      <div class="section-title">Политики</div>
       <label>
-        <span>Public contact hint</span>
-        <textarea name="public_contact_hint" rows="3" placeholder="Where to redirect complex cases"></textarea>
+        <span>Публичная подсказка для контакта</span>
+        <textarea name="public_contact_hint" rows="3" placeholder="Куда перенаправлять сложные кейсы"></textarea>
       </label>
       <label>
-        <span>Return policy summary</span>
-        <textarea name="return_policy_summary" rows="4" placeholder="Safe public wording for returns and exchanges"></textarea>
+        <span>Краткое правило по возвратам</span>
+        <textarea name="return_policy_summary" rows="4" placeholder="Безопасная публичная формулировка про возвраты и обмены"></textarea>
       </label>
       <label>
-        <span>Compensation policy</span>
-        <textarea name="compensation_policy" rows="3" placeholder="What is forbidden or allowed regarding refunds, bonuses, compensation"></textarea>
+        <span>Политика компенсаций</span>
+        <textarea name="compensation_policy" rows="3" placeholder="Что можно и нельзя обещать по возвратам, бонусам и компенсациям"></textarea>
       </label>
       <label>
-        <span>Forbidden phrases</span>
-        <textarea name="do_not_say" rows="5" placeholder="- We guarantee refund&#10;- It is your fault&#10;- This cannot happen"></textarea>
+        <span>Запрещенные формулировки</span>
+        <textarea name="do_not_say" rows="5" placeholder="- Мы гарантируем возврат&#10;- Это ваша вина&#10;- Такого не может быть"></textarea>
       </label>
       <div class="two-col">
         <label>
-          <span>Default language</span>
+          <span>Язык по умолчанию</span>
           <select name="default_language">
             <option value="ru">ru</option>
             <option value="en">en</option>
           </select>
         </label>
         <label>
-          <span>Auto threshold</span>
+          <span>Порог автопубликации</span>
           <input name="auto_publish_threshold" type="number" min="0" max="1" step="0.01" value="0.90" />
         </label>
       </div>
@@ -95,37 +96,36 @@
       </label>
       <div class="two-col">
         <label>
-          <span>Model</span>
+          <span>Модель</span>
           <input name="openai_model" value="gpt-5.4" />
         </label>
         <label>
-          <span>Base URL</span>
+          <span>Базовый URL</span>
           <input name="openai_base_url" value="https://api.openai.com/v1" />
         </label>
       </div>
       <div class="two-col">
         <label>
-          <span>Reasoning effort</span>
+          <span>Уровень рассуждений</span>
           <select name="reasoning_effort">
-            <option value="low">low</option>
-            <option value="medium">medium</option>
-            <option value="high">high</option>
-            <option value="none">none</option>
+            <option value="low">Низкий</option>
+            <option value="medium">Средний</option>
+            <option value="high">Высокий</option>
+            <option value="none">Без рассуждений</option>
           </select>
         </label>
         <label>
-          <span>Verbosity</span>
+          <span>Подробность ответа</span>
           <select name="text_verbosity">
-            <option value="low">low</option>
-            <option value="medium" selected>medium</option>
-            <option value="high">high</option>
+            <option value="low">Низкая</option>
+            <option value="medium" selected>Средняя</option>
+            <option value="high">Высокая</option>
           </select>
         </label>
       </div>
-      <button class="button primary wide" type="submit">Complete setup</button>
-      <p class="helper">After setup, the dashboard, storage, settings, history, and reply playground become available.</p>
+      <button class="button primary wide" type="submit">Завершить настройку</button>
+      <p class="helper">После этого откроются обзор, хранилище, история, настройки и экран генерации ответов.</p>
     </section>
   </form>
 </section>
 {% endblock %}
-

@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}" />
   </head>
   <body>
-    <div class="shell">
+    <div class="shell {{ 'welcome-shell' if current_page == 'welcome' else '' }}">
       {% if current_page != "welcome" %}
       <aside class="sidebar">
         <div class="brand-lockup">
@@ -19,19 +19,19 @@
         </div>
 
         <nav class="nav">
-          <a class="{{ 'active' if current_page == 'dashboard' else '' }}" href="/dashboard">Dashboard</a>
-          <a class="{{ 'active' if current_page == 'playground' else '' }}" href="/playground">Playground</a>
-          <a class="{{ 'active' if current_page == 'storage' else '' }}" href="/storage">Storage</a>
-          <a class="{{ 'active' if current_page == 'history' else '' }}" href="/history">History</a>
-          <a class="{{ 'active' if current_page == 'analytics' else '' }}" href="/analytics">Analytics</a>
-          <a class="{{ 'active' if current_page == 'audit' else '' }}" href="/audit">Audit</a>
-          <a class="{{ 'active' if current_page == 'settings' else '' }}" href="/settings">Settings</a>
+          <a class="{{ 'active' if current_page == 'dashboard' else '' }}" href="/dashboard">Обзор</a>
+          <a class="{{ 'active' if current_page == 'playground' else '' }}" href="/playground">Генерация</a>
+          <a class="{{ 'active' if current_page == 'storage' else '' }}" href="/storage">Хранилище</a>
+          <a class="{{ 'active' if current_page == 'history' else '' }}" href="/history">История</a>
+          <a class="{{ 'active' if current_page == 'analytics' else '' }}" href="/analytics">Аналитика</a>
+          <a class="{{ 'active' if current_page == 'audit' else '' }}" href="/audit">Аудит</a>
+          <a class="{{ 'active' if current_page == 'settings' else '' }}" href="/settings">Настройки</a>
         </nav>
 
         <div class="sidebar-panel">
-          <div class="sidebar-label">Brand</div>
-          <strong>{{ workspace.brand_name if workspace else 'Not configured' }}</strong>
-          <p>{{ workspace.brand_description[:140] ~ ('…' if workspace and workspace.brand_description|length > 140 else '') if workspace else 'Complete onboarding to unlock the workspace.' }}</p>
+          <div class="sidebar-label">Бренд</div>
+          <strong>{{ workspace.brand_name if workspace else 'Не настроено' }}</strong>
+          <p>{{ workspace.brand_description[:140] ~ ('…' if workspace and workspace.brand_description|length > 140 else '') if workspace else 'Завершите первичную настройку, чтобы открыть проект.' }}</p>
         </div>
       </aside>
       {% endif %}
@@ -40,20 +40,12 @@
         {% if current_page != "welcome" %}
         <header class="topbar">
           <div>
-            <div class="eyebrow">Internal AI customer care panel</div>
-            <h2>
-              {% if current_page == 'dashboard' %}Overview{% endif %}
-              {% if current_page == 'playground' %}Reply Playground{% endif %}
-              {% if current_page == 'storage' %}Brand Storage{% endif %}
-              {% if current_page == 'history' %}Generation History{% endif %}
-              {% if current_page == 'analytics' %}Analytics{% endif %}
-              {% if current_page == 'audit' %}Audit Log{% endif %}
-              {% if current_page == 'settings' %}Workspace Settings{% endif %}
-            </h2>
+            <div class="eyebrow">Внутренняя AI-панель customer care</div>
+            <h2>{{ page_title(current_page) }}</h2>
           </div>
           <div class="topbar-actions">
-            <a class="button ghost" href="/playground">New draft</a>
-            <a class="button primary" href="/storage">Open storage</a>
+            <a class="button ghost" href="/playground">Новый черновик</a>
+            <a class="button primary" href="/storage">Открыть хранилище</a>
           </div>
         </header>
         {% endif %}

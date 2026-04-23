@@ -5,8 +5,8 @@
   <article class="panel">
     <div class="panel-header">
       <div>
-        <div class="eyebrow">Runs</div>
-        <h3>All generated review drafts</h3>
+        <div class="eyebrow">Запуски</div>
+        <h3>Все сгенерированные черновики</h3>
       </div>
     </div>
     <div class="table-wrap">
@@ -14,9 +14,9 @@
         <thead>
           <tr>
             <th>ID</th>
-            <th>Review</th>
-            <th>Decision</th>
-            <th>Confidence</th>
+            <th>Отзыв</th>
+            <th>Маршрут</th>
+            <th>Уверенность</th>
             <th></th>
           </tr>
         </thead>
@@ -25,13 +25,13 @@
           <tr>
             <td>#{{ run.id }}</td>
             <td>{{ run.review_text[:90] ~ ('…' if run.review_text|length > 90 else '') }}</td>
-            <td>{{ run.decision.value if run.decision else run.status.value }}</td>
+            <td>{{ decision_label(run.decision.value) if run.decision else status_label(run.status.value) }}</td>
             <td>{{ '%.2f'|format(run.confidence_score or 0) }}</td>
-            <td><a href="/history?run_id={{ run.id }}">Inspect</a></td>
+            <td><a href="/history?run_id={{ run.id }}">Открыть</a></td>
           </tr>
           {% else %}
           <tr>
-            <td colspan="5">No history yet.</td>
+            <td colspan="5">История пока пуста.</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -43,31 +43,31 @@
     <article class="panel">
       <div class="panel-header">
         <div>
-          <div class="eyebrow">Selected run</div>
-          <h3>{% if selected_run %}Run #{{ selected_run.id }}{% else %}Choose a run{% endif %}</h3>
+          <div class="eyebrow">Выбранный запуск</div>
+          <h3>{% if selected_run %}Запуск #{{ selected_run.id }}{% else %}Выберите запуск{% endif %}</h3>
         </div>
       </div>
       {% if selected_run %}
       <div class="badge-row">
-        <span class="badge">{{ selected_run.decision.value if selected_run.decision else selected_run.status.value }}</span>
-        <span class="badge subdued">risk: {{ selected_run.risk_level or 'n/a' }}</span>
-        <span class="badge subdued">confidence: {{ '%.2f'|format(selected_run.confidence_score or 0) }}</span>
+        <span class="badge">{{ decision_label(selected_run.decision.value) if selected_run.decision else status_label(selected_run.status.value) }}</span>
+        <span class="badge subdued">риск: {{ risk_label(selected_run.risk_level) }}</span>
+        <span class="badge subdued">уверенность: {{ '%.2f'|format(selected_run.confidence_score or 0) }}</span>
       </div>
 
       <div class="result-block">
-        <div class="result-title">Review</div>
+        <div class="result-title">Отзыв</div>
         <div class="reply-box">{{ selected_run.review_text }}</div>
       </div>
       <div class="result-block">
-        <div class="result-title">Reply</div>
+        <div class="result-title">Ответ</div>
         <div class="reply-box">{{ selected_run.reply_result.reply_text if selected_run.reply_result else selected_run.error_text }}</div>
       </div>
       <div class="code-block">
-        <div class="result-title">Structured payload</div>
+        <div class="result-title">Структурированный JSON</div>
         <pre>{{ selected_run.reply_result | tojson(indent=2) }}</pre>
       </div>
       {% else %}
-      <div class="empty-state">Pick a run from the list to inspect the result.</div>
+      <div class="empty-state">Выберите запуск из списка, чтобы посмотреть результат.</div>
       {% endif %}
     </article>
 
@@ -75,22 +75,21 @@
     <form class="panel form-grid" method="post" action="/history/{{ selected_run.id }}/promote">
       <div class="panel-header">
         <div>
-          <div class="eyebrow">Promote to storage</div>
-          <h3>Save this run as a golden example</h3>
+          <div class="eyebrow">Перенос в хранилище</div>
+          <h3>Сохранить запуск как удачный пример</h3>
         </div>
       </div>
       <label>
-        <span>Title</span>
-        <input name="title" value="Example from run #{{ selected_run.id }}" required />
+        <span>Заголовок</span>
+        <input name="title" value="Пример из запуска #{{ selected_run.id }}" required />
       </label>
       <label>
-        <span>Notes</span>
-        <textarea name="notes" rows="3" placeholder="Why this is a good example"></textarea>
+        <span>Заметки</span>
+        <textarea name="notes" rows="3" placeholder="Почему это хороший пример"></textarea>
       </label>
-      <button class="button primary" type="submit">Save to storage</button>
+      <button class="button primary" type="submit">Сохранить в хранилище</button>
     </form>
     {% endif %}
   </section>
 </section>
 {% endblock %}
-

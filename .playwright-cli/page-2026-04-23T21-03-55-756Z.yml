@@ -1,0 +1,125 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: R
+      - generic [ref=e6]:
+        - generic [ref=e7]: ReviewOps AI
+        - heading "ReviewOps AI" [level=1] [ref=e8]
+    - navigation [ref=e9]:
+      - link "Обзор" [ref=e10] [cursor=pointer]:
+        - /url: /dashboard
+      - link "Генерация" [ref=e11] [cursor=pointer]:
+        - /url: /playground
+      - link "Хранилище" [ref=e12] [cursor=pointer]:
+        - /url: /storage
+      - link "История" [ref=e13] [cursor=pointer]:
+        - /url: /history
+      - link "Аналитика" [ref=e14] [cursor=pointer]:
+        - /url: /analytics
+      - link "Аудит" [ref=e15] [cursor=pointer]:
+        - /url: /audit
+      - link "Настройки" [ref=e16] [cursor=pointer]:
+        - /url: /settings
+    - generic [ref=e17]:
+      - generic [ref=e18]: Бренд
+      - strong [ref=e19]: Тестовый бренд
+      - paragraph [ref=e20]: Бренд для проверки русской админки и генерации ответов.
+  - main [ref=e21]:
+    - generic [ref=e22]:
+      - generic [ref=e23]:
+        - generic [ref=e24]: Внутренняя AI-панель customer care
+        - heading "Аналитика" [level=2] [ref=e25]
+      - generic [ref=e26]:
+        - link "Новый черновик" [ref=e27] [cursor=pointer]:
+          - /url: /playground
+        - link "Открыть хранилище" [ref=e28] [cursor=pointer]:
+          - /url: /storage
+    - generic [ref=e29]:
+      - article [ref=e30]:
+        - text: Всего запусков
+        - strong [ref=e31]: "0"
+      - article [ref=e32]:
+        - text: Успешность
+        - strong [ref=e33]: 0.0%
+      - article [ref=e34]:
+        - text: Средняя уверенность
+        - strong [ref=e35]: —
+      - article [ref=e36]:
+        - text: Активное хранилище
+        - strong [ref=e37]: "1"
+    - generic [ref=e38]:
+      - article [ref=e39]:
+        - generic [ref=e41]:
+          - generic [ref=e42]: Распределение решений
+          - heading "Маршрутизация генераций" [level=3] [ref=e43]
+        - table [ref=e45]:
+          - rowgroup [ref=e46]:
+            - row "Решение Количество" [ref=e47]:
+              - columnheader "Решение" [ref=e48]
+              - columnheader "Количество" [ref=e49]
+          - rowgroup [ref=e50]:
+            - row "Запусков генерации пока нет." [ref=e51]:
+              - cell "Запусков генерации пока нет." [ref=e52]
+      - article [ref=e53]:
+        - generic [ref=e55]:
+          - generic [ref=e56]: Уровни риска
+          - heading "Насколько рискованные входящие кейсы" [level=3] [ref=e57]
+        - table [ref=e59]:
+          - rowgroup [ref=e60]:
+            - row "Риск Количество" [ref=e61]:
+              - columnheader "Риск" [ref=e62]
+              - columnheader "Количество" [ref=e63]
+          - rowgroup [ref=e64]:
+            - row "Данных по рискам пока нет." [ref=e65]:
+              - cell "Данных по рискам пока нет." [ref=e66]
+    - generic [ref=e67]:
+      - article [ref=e68]:
+        - generic [ref=e70]:
+          - generic [ref=e71]: Основные типы проблем
+          - heading "Самые частые проблемы в запросах" [level=3] [ref=e72]
+        - table [ref=e74]:
+          - rowgroup [ref=e75]:
+            - row "Тип проблемы Количество" [ref=e76]:
+              - columnheader "Тип проблемы" [ref=e77]
+              - columnheader "Количество" [ref=e78]
+          - rowgroup [ref=e79]:
+            - row "Тегов проблем пока нет." [ref=e80]:
+              - cell "Тегов проблем пока нет." [ref=e81]
+      - article [ref=e82]:
+        - generic [ref=e84]:
+          - generic [ref=e85]: Основные reason codes
+          - heading "Почему система выбирает именно такие маршруты" [level=3] [ref=e86]
+        - table [ref=e88]:
+          - rowgroup [ref=e89]:
+            - row "Reason code Количество" [ref=e90]:
+              - columnheader "Reason code" [ref=e91]
+              - columnheader "Количество" [ref=e92]
+          - rowgroup [ref=e93]:
+            - row "Кодов причин пока нет." [ref=e94]:
+              - cell "Кодов причин пока нет." [ref=e95]
+    - generic [ref=e96]:
+      - article [ref=e97]:
+        - generic [ref=e99]:
+          - generic [ref=e100]: Топ SKU
+          - heading "Товары, которые встречаются чаще всего" [level=3] [ref=e101]
+        - table [ref=e103]:
+          - rowgroup [ref=e104]:
+            - row "SKU Количество" [ref=e105]:
+              - columnheader "SKU" [ref=e106]
+              - columnheader "Количество" [ref=e107]
+          - rowgroup [ref=e108]:
+            - row "Данных по SKU пока нет." [ref=e109]:
+              - cell "Данных по SKU пока нет." [ref=e110]
+      - article [ref=e111]:
+        - generic [ref=e113]:
+          - generic [ref=e114]: Покрытие хранилища
+          - heading "Активное хранилище по типам элементов" [level=3] [ref=e115]
+        - table [ref=e117]:
+          - rowgroup [ref=e118]:
+            - row "Тип элемента Количество" [ref=e119]:
+              - columnheader "Тип элемента" [ref=e120]
+              - columnheader "Количество" [ref=e121]
+          - rowgroup [ref=e122]:
+            - row "Политика 1" [ref=e123]:
+              - cell "Политика" [ref=e124]
+              - cell "1" [ref=e125]

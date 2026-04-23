@@ -46,6 +46,76 @@ from app.services.workspace import (
     update_prompts,
 )
 
+PAGE_TITLES = {
+    "dashboard": "Обзор",
+    "playground": "Генерация ответа",
+    "storage": "Хранилище бренда",
+    "history": "История генераций",
+    "analytics": "Аналитика",
+    "audit": "Журнал аудита",
+    "settings": "Настройки проекта",
+}
+
+MARKETPLACE_LABELS = {
+    "manual": "Ручной ввод",
+    "wb": "Wildberries",
+    "ozon": "Ozon",
+    "yandex_market": "Яндекс.Маркет",
+}
+
+KNOWLEDGE_ITEM_LABELS = {
+    "policy": "Политика",
+    "example": "Удачный пример",
+    "product_fact": "Факт о товаре",
+    "faq": "FAQ",
+    "forbidden_phrase": "Запрещенная формулировка",
+}
+
+DECISION_LABELS = {
+    "auto_publish_candidate": "Можно автоопубликовать",
+    "manual_review": "Нужна модерация",
+    "escalate": "Эскалация",
+}
+
+STATUS_LABELS = {
+    "completed": "Успешно",
+    "failed": "Ошибка",
+}
+
+RISK_LABELS = {
+    "low": "Низкий",
+    "medium": "Средний",
+    "high": "Высокий",
+}
+
+ACTION_LABELS = {
+    "created": "Создано",
+    "updated": "Обновлено",
+    "archived": "Архивировано",
+    "promoted_from_run": "Добавлено из истории",
+    "setup_completed": "Первичная настройка завершена",
+    "prompt_published": "Опубликована версия промпта",
+}
+
+ENTITY_LABELS = {
+    "workspace": "Проект",
+    "knowledge_item": "Элемент хранилища",
+    "prompt_version": "Версия промпта",
+}
+
+REASONING_LABELS = {
+    "none": "Без рассуждений",
+    "low": "Низкий",
+    "medium": "Средний",
+    "high": "Высокий",
+}
+
+VERBOSITY_LABELS = {
+    "low": "Низкая",
+    "medium": "Средняя",
+    "high": "Высокая",
+}
+
 
 class SetupAPIRequest(BaseModel):
     project_name: str
@@ -100,6 +170,18 @@ def create_app(
 
     app = FastAPI(title=config.app_name, lifespan=lifespan)
     templates = Jinja2Templates(directory=str(config.templates_dir))
+    templates.env.globals.update(
+        page_title=_page_title,
+        marketplace_label=_marketplace_label,
+        item_type_label=_item_type_label,
+        decision_label=_decision_label,
+        status_label=_status_label,
+        risk_label=_risk_label,
+        action_label=_action_label,
+        entity_label=_entity_label,
+        reasoning_label=_reasoning_label,
+        verbosity_label=_verbosity_label,
+    )
     app.mount("/static", StaticFiles(directory=str(config.static_dir)), name="static")
 
     app.state.config = config
@@ -128,7 +210,7 @@ def create_app(
                     return JSONResponse(
                         {
                             "error": "workspace_setup_required",
-                            "message": "Complete workspace onboarding before using the API.",
+                            "message": "Сначала завершите первичную настройку проекта.",
                         },
                         status_code=status.HTTP_423_LOCKED,
                     )
@@ -300,7 +382,7 @@ def create_app(
             seed_initial_knowledge(session, workspace.do_not_say, workspace)
             session.commit()
         return RedirectResponse(
-            url="/dashboard?message=Workspace+configured",
+            url=f"/dashboard?message={_quote_query('Проект настроен')}",
             status_code=status.HTTP_303_SEE_OTHER,
         )
 
@@ -383,7 +465,7 @@ def create_app(
                 )
                 session.commit()
                 return RedirectResponse(
-                    url=f"/playground?run_id={result.run.id}&message=Draft+generated",
+                    url=f"/playground?run_id={result.run.id}&message={_quote_query('Черновик ответа готов')}",
                     status_code=status.HTTP_303_SEE_OTHER,
                 )
             except Exception as exc:
@@ -459,7 +541,7 @@ def create_app(
                 create_item(session, payload)
             session.commit()
         return RedirectResponse(
-            url="/storage?message=Storage+updated",
+            url=f"/storage?message={_quote_query('Хранилище обновлено')}",
             status_code=status.HTTP_303_SEE_OTHER,
         )
 
@@ -471,7 +553,7 @@ def create_app(
                 archive_item(session, item)
                 session.commit()
         return RedirectResponse(
-            url="/storage?message=Item+archived",
+            url=f"/storage?message={_quote_query('Элемент перенесен в архив')}",
             status_code=status.HTTP_303_SEE_OTHER,
         )
 
@@ -542,7 +624,7 @@ def create_app(
                 promote_run_to_example(session, run, title=title, notes=notes)
                 session.commit()
         return RedirectResponse(
-            url=f"/history?run_id={run_id}&message=Saved+to+storage",
+            url=f"/history?run_id={run_id}&message={_quote_query('Пример добавлен в хранилище')}",
             status_code=status.HTTP_303_SEE_OTHER,
         )
 
@@ -641,7 +723,7 @@ def create_app(
             save_workspace_setup(session, secret_box, payload)
             session.commit()
         return RedirectResponse(
-            url="/settings?message=Workspace+settings+saved",
+            url=f"/settings?message={_quote_query('Настройки проекта сохранены')}",
             status_code=status.HTTP_303_SEE_OTHER,
         )
 
@@ -662,7 +744,7 @@ def create_app(
             )
             session.commit()
         return RedirectResponse(
-            url="/settings?message=Prompts+published",
+            url=f"/settings?message={_quote_query('Новая версия промптов опубликована')}",
             status_code=status.HTTP_303_SEE_OTHER,
         )
 
@@ -787,11 +869,11 @@ def _run_openai_connection_test(
 ) -> dict[str, Any]:
     workspace = get_workspace(session)
     if not workspace or not workspace.setup_completed_at:
-        raise ValueError("Workspace is not configured yet.")
+        raise ValueError("Проект еще не настроен.")
 
     api_key = secret_box.decrypt(workspace.openai_api_key_encrypted)
     if not api_key:
-        raise ValueError("OpenAI API key is missing.")
+        raise ValueError("Не задан OpenAI API key.")
 
     client = _client_for_workspace(session, config, default_client)
     schema = {
@@ -807,7 +889,7 @@ def _run_openai_connection_test(
         api_key=api_key,
         model=workspace.openai_model,
         system_prompt="Return strict JSON and confirm that the workspace can reach OpenAI.",
-        user_prompt="Return {ok: true, message: 'OpenAI connection is healthy.'} in the requested JSON schema.",
+        user_prompt="Return {ok: true, message: 'Подключение к OpenAI работает.'} in the requested JSON schema.",
         schema=schema,
         schema_name="connection_check",
         reasoning_effort=workspace.reasoning_effort,
@@ -816,5 +898,63 @@ def _run_openai_connection_test(
     )
     parsed = result.parsed
     if not parsed.get("ok"):
-        raise ValueError(parsed.get("message", "OpenAI connection test failed."))
+        raise ValueError(parsed.get("message", "Проверка подключения к OpenAI завершилась ошибкой."))
     return parsed
+
+
+def _page_title(current_page: str) -> str:
+    return PAGE_TITLES.get(current_page, "ReviewOps AI")
+
+
+def _marketplace_label(value: Optional[str]) -> str:
+    if not value:
+        return "—"
+    return MARKETPLACE_LABELS.get(value, value)
+
+
+def _item_type_label(value: Optional[str]) -> str:
+    if not value:
+        return "—"
+    return KNOWLEDGE_ITEM_LABELS.get(value, value)
+
+
+def _decision_label(value: Optional[str]) -> str:
+    if not value:
+        return "—"
+    return DECISION_LABELS.get(value, value)
+
+
+def _status_label(value: Optional[str]) -> str:
+    if not value:
+        return "—"
+    return STATUS_LABELS.get(value, value)
+
+
+def _risk_label(value: Optional[str]) -> str:
+    if not value:
+        return "—"
+    return RISK_LABELS.get(value, value)
+
+
+def _action_label(value: Optional[str]) -> str:
+    if not value:
+        return "—"
+    return ACTION_LABELS.get(value, value.replace("_", " "))
+
+
+def _entity_label(value: Optional[str]) -> str:
+    if not value:
+        return "—"
+    return ENTITY_LABELS.get(value, value.replace("_", " "))
+
+
+def _reasoning_label(value: Optional[str]) -> str:
+    if not value:
+        return "—"
+    return REASONING_LABELS.get(value, value)
+
+
+def _verbosity_label(value: Optional[str]) -> str:
+    if not value:
+        return "—"
+    return VERBOSITY_LABELS.get(value, value)
