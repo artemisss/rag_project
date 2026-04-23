@@ -6,7 +6,8 @@ from fastapi.testclient import TestClient
 
 from app.core.config import AppConfig
 from app.main import create_app
-from app.services.openai_client import OpenAIStructuredResult
+from app.services.generation import ClassificationResult, ReplyResult
+from app.services.openai_client import OpenAIStructuredResult, _normalize_strict_json_schema
 from app.services.knowledge import KnowledgeItemPayload, create_item
 from app.services.policy import decide_review_route
 from app.services.retrieval import RetrievalRequest, retrieve_context
@@ -203,6 +204,19 @@ def test_policy_engine_escalates_high_risk_cases() -> None:
 
     assert outcome.decision.value == "escalate"
     assert outcome.risk_level == "high"
+
+
+def test_strict_schema_normalizer_marks_all_properties_as_required() -> None:
+    classification_schema = _normalize_strict_json_schema(ClassificationResult.model_json_schema())
+    reply_schema = _normalize_strict_json_schema(ReplyResult.model_json_schema())
+
+    assert classification_schema["required"] == list(
+        classification_schema["properties"].keys()
+    )
+    assert classification_schema["additionalProperties"] is False
+
+    assert reply_schema["required"] == list(reply_schema["properties"].keys())
+    assert reply_schema["additionalProperties"] is False
 
 
 def test_end_to_end_generation_history_analytics_and_connection_check(tmp_path: Path) -> None:

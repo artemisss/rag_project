@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import json
 import time
 from dataclasses import dataclass
@@ -44,6 +45,7 @@ class OpenAIResponsesClient:
         verbosity: str,
         max_output_tokens: int = 1600,
     ) -> OpenAIStructuredResult:
+        strict_schema = _normalize_strict_json_schema(schema)
         payload = {
             "model": model,
             "store": False,
@@ -59,7 +61,7 @@ class OpenAIResponsesClient:
                     "type": "json_schema",
                     "name": schema_name,
                     "strict": True,
-                    "schema": schema,
+                    "schema": strict_schema,
                 },
             },
         }
@@ -151,3 +153,44 @@ def _extract_json_fragment(content: str) -> str:
     if start != -1 and end != -1 and end > start:
         return content[start : end + 1]
     return content
+
+
+def _normalize_strict_json_schema(schema: dict[str, Any]) -> dict[str, Any]:
+    normalized = copy.deepcopy(schema)
+    _normalize_schema_node(normalized)
+    return normalized
+
+
+def _normalize_schema_node(node: Any) -> None:
+    if not isinstance(node, dict):
+        return
+
+    if node.get("type") == "object":
+        properties = node.get("properties", {})
+        if isinstance(properties, dict):
+            node["required"] = list(properties.keys())
+            node["additionalProperties"] = False
+            for child in properties.values():
+                _normalize_schema_node(child)
+
+    items = node.get("items")
+    if isinstance(items, dict):
+        _normalize_schema_node(items)
+    elif isinstance(items, list):
+        for item in items:
+            _normalize_schema_node(item)
+
+    for key in ("$defs", "definitions"):
+        definitions = node.get(key, {})
+        if isinstance(definitions, dict):
+            for child in definitions.values():
+                _normalize_schema_node(child)
+
+    for key in ("anyOf", "allOf", "oneOf", "prefixItems"):
+        value = node.get(key, [])
+        if isinstance(value, list):
+            for child in value:
+                _normalize_schema_node(child)
+
+    if isinstance(node.get("not"), dict):
+        _normalize_schema_node(node["not"])
